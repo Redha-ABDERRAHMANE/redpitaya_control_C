@@ -3,8 +3,7 @@
 #include <iostream>
 #include "waveGnPresets.hpp"
 #include "RpSignalGn.hpp"
-#include "RedpitayaCard.hpp"
-#include "controller.hpp"
+//#include "controller.hpp"
 int main() {
 	const char* IP_PRIMARY = "169.254.112.159"; //Master board : rp - f0cafe.local
 	const char* IP_SECONDARY = "169.254.9.76"; //slave board 

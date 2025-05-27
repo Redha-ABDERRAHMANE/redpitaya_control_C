@@ -96,7 +96,7 @@ public:
     }
     // STEP-6 Send Data to the server
 
-    bool tx_txt(const std::string& message) {
+    bool tx_txt(const std::string& message) const {
         std::string full_message = message + delimiter;  // Add \r\n like Python
 
         int bytes_sent = send(TCPClientSocket, full_message.c_str(), (int)full_message.length(), 0);

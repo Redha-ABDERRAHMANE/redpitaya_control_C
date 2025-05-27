@@ -8,7 +8,7 @@
 #include <cmath>
 #include <vector>
 #include "RedpitayaCard.hpp"
-#include "controller.hpp"
+
 #define SOURCE_1 1
 #define SOURCE_2 2
 
@@ -23,9 +23,7 @@ class RpSignalGn
 {
 	using p_array = std::array<float,6>;
 private:
-	Controller controller;
 	
-
 	//waveGnPresets presetFactory;
 	RedpitayaCards rp_boards;
 
@@ -34,7 +32,7 @@ private:
 public:
 	
 	RpSignalGn(const char* primaryBoardIP, const char* secondaryBoardIP) :
-		rp_boards(primaryBoardIP, secondaryBoardIP, 5), controller(){
+		rp_boards(primaryBoardIP, secondaryBoardIP, 5){
 
 
 
