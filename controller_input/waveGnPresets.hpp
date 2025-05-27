@@ -91,26 +91,37 @@ public:
 	const p_array& get_previousPresetUsed()const {
 		return previousPresetUsed;
 	}
+	void set_previousPresetUsed(const p_array preset) {
+		previousPresetUsed = preset;
+	}
 
 	void set_currentPreset(const int& button_value) {
 		currentPreset = get_preset(button_value);
+	}
+	void set_currentPreset(const p_array preset) {
+		currentPreset = preset;
 	}
 
 
 
 
-	const p_array& get_preset(const int& button_value) const {
+
+
+	const p_array& get_preset(const int& button_value){
+
+		if (Controller::isButton(button_value) && ! check_lastPresetCoherence(button_value)) { return currentPreset; }
+
 		static const p_array& hat_up_preset = dictionary_bumperHatPreset.at(Buttons::HAT_UP);
 		static const p_array& hat_left_preset = dictionary_bumperHatPreset.at(Buttons::HAT_LEFT);
-		int index = 0;
 		bool isUp_or_left = (currentPreset == hat_up_preset) || (currentPreset == hat_left_preset);
 
-		if WithInInterval(Buttons::A, button_value, Buttons::Y) {
 
-			if (isUp_or_left) return dictionary_buttonPreset.at(button_value).first;
-			return dictionary_buttonPreset.at(button_value).second;
+		if (WithInInterval(Buttons::A, button_value, Buttons::Y)) {
+			const std::pair<p_array, p_array>& preset_pair = dictionary_buttonPreset.at(button_value);
+			return currentPreset = isUp_or_left ? preset_pair.first : preset_pair.second;
+
 		}
-		return dictionary_bumperHatPreset.at(button_value);
+		return currentPreset = dictionary_bumperHatPreset.at(button_value);
 
 	}
 
@@ -121,12 +132,12 @@ public:
 		static const p_array& hat_right_preset = dictionary_bumperHatPreset.at(Buttons::HAT_RIGHT);
 
 		if (currentPreset == hat_up_preset || currentPreset == hat_down_preset) {
-			return check_Equals(button_value, Buttons::B, Buttons::X)?1:0;
+			return check_Equals(button_value, Buttons::B, Buttons::X);
 		}
 		if (currentPreset == hat_left_preset || currentPreset == hat_right_preset) {
-			return check_Equals(button_value, Buttons::A, Buttons::Y)?1:0;
+			return check_Equals(button_value, Buttons::A, Buttons::Y);
 		}
-		return -1;
+		return false;
 	}
 
 

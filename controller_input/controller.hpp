@@ -45,7 +45,11 @@ private:
 
 public:
 	Controller();
-	const int& CheckControllerEvent();
+	const int CheckControllerEvent();
+	static bool isButton(const int& button_value) {
+		return WithInInterval(Buttons::A, button_value, Buttons::Y);
+
+	}
 	~Controller();
 
 };

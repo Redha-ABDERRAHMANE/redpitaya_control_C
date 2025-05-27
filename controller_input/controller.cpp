@@ -33,7 +33,7 @@ Controller::Controller() :keyStroke{}, state() {
 	}
 }
 
-const int& Controller::CheckControllerEvent() {
+const int Controller::CheckControllerEvent() {
 	DWORD dwReserved = 0;
 	DWORD KeyStroke_result = XInputGetKeystroke(dwControllerIndex, dwReserved, (PXINPUT_KEYSTROKE)&keyStroke);
 
@@ -42,6 +42,8 @@ const int& Controller::CheckControllerEvent() {
 	
 
 }
+
+
 
 Controller::~Controller() {
 	std::cout << "end" << std::endl;

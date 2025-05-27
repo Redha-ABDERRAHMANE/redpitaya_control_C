@@ -6,6 +6,9 @@
 #include <chrono>
 #include <ctime>
 #include <cmath>
+#include <vector>
+#include "RedpitayaCard.hpp"
+#include "controller.hpp"
 #define SOURCE_1 1
 #define SOURCE_2 2
 
@@ -18,17 +21,20 @@
 
 class RpSignalGn
 {
+	using p_array = std::array<float,6>;
 private:
 	Controller controller;
-	scpi rp_primary;
-	scpi rp_secondary;
-	waveGnPresets presetFactory;
+	
+
+	//waveGnPresets presetFactory;
+	RedpitayaCards rp_boards;
 
 
 
 public:
+	
 	RpSignalGn(const char* primaryBoardIP, const char* secondaryBoardIP) :
-		rp_primary(primaryBoardIP), rp_secondary(secondaryBoardIP), controller(), presetFactory() {
+		rp_boards(primaryBoardIP, secondaryBoardIP, 5), controller(){
 
 
 
@@ -50,35 +56,71 @@ public:
 	}
 
 
-	void ramp_up_and_down(scpi& rp_board, int source, float current_value, float target_value, bool ramp_up, const std::string& V_P = "VOLT") {
-
+	void ramp_up_and_down(const int& card, int source, float current_value, float target_value, const std::string& V_P = "VOLT") {
 		float step_size = (target_value - current_value) / STEPS;
 		const std::string command = "SOUR" + std::to_string(source) + ":" + V_P + " ";
 		float new_value = current_value;
 
 
-		if (!ramp_up) { step_size = -step_size; }
-		for (int i = 0; i < STEPS; ++i) {
+		
+		for (volatile int i = 0; i < STEPS; i++) {
+			
 			new_value += step_size;
-			rp_board.tx_txt(command + std::to_string(new_value));
-			std::this_thread::sleep_for(std::chrono::milliseconds(500));
+
+			rp_boards.send_txt(card, command + std::to_string(new_value));
+	
+			std::this_thread::sleep_for(std::chrono::milliseconds(300));
 		}
 
 
-		rp_board.tx_txt(command + std::to_string(target_value));
+		rp_boards.send_txt(card, command + std::to_string(target_value));
 	}
 
-	void detect_ramp_up_or_down(scpi& rp_board, const float& target_value, const float& current_value,const int& source, const std::string& V_P = "VOLT"){
-		if (target_value > current_value) {
-			ramp_up_and_down(rp_board, source, current_value, target_value, true, V_P);
+	void detect_ramp_up_or_down(const int& card, const float& target_value, const float& current_value,const int& source, const std::string& V_P = "VOLT"){
+		if (target_value != current_value){
+			ramp_up_and_down(card, source, current_value, target_value, V_P);
 		}
-		else if (target_value < current_value) {
-			ramp_up_and_down(rp_board, source, current_value, target_value, false, V_P);
 
-		}
 	}
 	//TODO COMPLETE THIS METHOD
-	void apply_preset_values(std::array<float,6>){
+	const p_array apply_preset_values(p_array&preset, const std::array<float, 6>& previous_preset_used){
+		if (preset == previous_preset_used) {
+			std::cout << "same preset:" << std::endl;
+			std::cout << "preset:" << std::endl;
+			for (auto& x : preset) {
+				std::cout << x << " ";
+			}
+		
+
+
+			std::cout << "\n previous preset:" << std::endl;
+			for (auto& x : previous_preset_used) {
+				std::cout << x << " ";
+			}
+			std::cout<<std::endl;
+
+			return previous_preset_used; }
+
+		std::vector<std::thread> threadVector;
+		threadVector.reserve(8);
+
+		threadVector.emplace_back(&RpSignalGn::detect_ramp_up_or_down,this, PRIMARY_BOARD, preset[2], previous_preset_used[2], SOURCE_1, "PHAS");
+		threadVector.emplace_back(&RpSignalGn::detect_ramp_up_or_down,this, PRIMARY_BOARD, preset[2], previous_preset_used[2], SOURCE_2, "PHAS");
+		threadVector.emplace_back(&RpSignalGn::detect_ramp_up_or_down,this, SECONDARY_BOARD, preset[5], previous_preset_used[5], SOURCE_1, "PHAS");
+		threadVector.emplace_back(&RpSignalGn::detect_ramp_up_or_down,this, SECONDARY_BOARD, preset[5], previous_preset_used[5], SOURCE_2, "PHAS");
+
+		threadVector.emplace_back(&RpSignalGn::detect_ramp_up_or_down,this, PRIMARY_BOARD, preset[0], previous_preset_used[0], SOURCE_1, "VOLT");
+		threadVector.emplace_back(&RpSignalGn::detect_ramp_up_or_down,this, PRIMARY_BOARD, preset[1], previous_preset_used[1], SOURCE_2, "VOLT");
+		threadVector.emplace_back(&RpSignalGn::detect_ramp_up_or_down,this, SECONDARY_BOARD, preset[3], previous_preset_used[3], SOURCE_1, "VOLT");
+		threadVector.emplace_back(&RpSignalGn::detect_ramp_up_or_down,this, SECONDARY_BOARD, preset[4], previous_preset_used[4], SOURCE_2, "VOLT");
+
+
+		for (std::thread& t : threadVector) { t.join(); }
+		std::this_thread::sleep_for(std::chrono::milliseconds(500));
+		return preset;
+
+
+
 		//
 
 

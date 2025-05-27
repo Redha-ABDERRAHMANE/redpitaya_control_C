@@ -1,3 +1,4 @@
+#pragma once
 #include"scpi.hpp"
 
 #define AMPLITUDE_0 0.0f
@@ -11,16 +12,17 @@ class RedpitayaCards
 {
 private:
 
+
+public:
     scpi rp_primary;
     scpi rp_secondary;
-public:
     RedpitayaCards(const char* host_primary, const char* host_secondary, const int& frequency) :rp_primary(host_primary), rp_secondary(host_secondary) {
         reset_generators();
         set_DaisyChain_SourceTrigger_MasterBoard();
         set_DaisyChain_SourceTrigger_SlaveBoard();
         verify_board_daisy_configuration();
-        set_InitialSource_sineWave_parameters(PRIMARY_BOARD, frequency);
-        set_InitialSource_sineWave_parameters(SECONDARY_BOARD, frequency);
+        set_InitialSource_sineWave_parameters(PRIMARY_BOARD, frequency,1.0);
+        set_InitialSource_sineWave_parameters(SECONDARY_BOARD, frequency,1.0);
         enable_board_outputs();
         set_arm_trigger_slave_board(rp_secondary);
         displayBoardsConfig();
@@ -125,5 +127,13 @@ public:
         printf("SECONDARY Trigger source: %s\n", rp_secondary.txrx_txt("SOUR1:TRIG:SOUR?").c_str());
 
     }
+
+    void send_txt(const int& card,std::string full_command) {
+        scpi& rp_board = card == PRIMARY_BOARD ? rp_primary : rp_secondary;
+        rp_board.tx_txt(full_command.c_str());
+
+
+    }
+
 
 };
