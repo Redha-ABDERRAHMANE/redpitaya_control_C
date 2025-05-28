@@ -38,6 +38,44 @@ int main() {
 	int button_value;
 	while (true) {
 		button_value = j.CheckControllerEvent();
+		if (button_value == Buttons::SELECT) {
+			float a, b, c, d;
+			std::cout << " custom preset:" << std::endl;
+			scanf(" %f.2,%f.2,%f,%f.2,%f.2,%f", &a, &b, &c, &d);
+
+		}
+		else if (button_value == Buttons::START) {
+			float a, b;
+			std::cout << " custom phase:" << std::endl;
+			scanf(" %f,%f", &a, &b);
+
+			auto nextPreset = p.get_currentPreset();
+			nextPreset[2] = a;
+			nextPreset[5] = b;
+
+
+
+
+
+			auto currentPreset = p.get_currentPreset();
+
+			for (auto& x : nextPreset) {
+				std::cout << " " << x << " ";
+			}std::cout << std::endl;
+
+			for (auto& x : currentPreset) {
+				std::cout << " " << x << " ";
+			}std::cout << std::endl;
+			if (SignalGn.apply_preset_values(nextPreset, currentPreset)) {
+				p.set_previousPresetUsed(currentPreset);
+				p.set_currentPreset(nextPreset);
+
+			}
+
+
+
+
+		}
 
 		if (button_value != -1) {
 	
