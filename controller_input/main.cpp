@@ -3,7 +3,7 @@
 #include <iostream>
 #include "waveGnPresets.hpp"
 #include "RpSignalGn.hpp"
-//#include "controller.hpp"
+#include "controller.hpp"
 int main() {
 	const char* IP_PRIMARY = "169.254.112.159"; //Master board : rp - f0cafe.local
 	const char* IP_SECONDARY = "169.254.9.76"; //slave board 
@@ -36,19 +36,19 @@ int main() {
 	RpSignalGn SignalGn("169.254.112.159", "169.254.9.76");
 	waveGnPresets p;
 	int button_value;
-	p.set_previousPresetUsed({ 1,1,0,1,1,50 });
 	while (true) {
 		button_value = j.CheckControllerEvent();
 
 		if (button_value != -1) {
-			p.set_currentPreset(button_value);
+			p.update_currentPreviousPreset(button_value);
 			auto preset = p.get_currentPreset();
+			auto previousPreset = p.get_previousPresetUsed();
+	
 
-			p.set_previousPresetUsed(SignalGn.apply_preset_values(preset, p.get_previousPresetUsed()));
-			for (float& x : preset) {
-				std::cout << " " << x << " ";
-			}
-			std::cout<< std::endl;
+
+
+			SignalGn.apply_preset_values(preset,previousPreset);
+
 
 		}
 	}

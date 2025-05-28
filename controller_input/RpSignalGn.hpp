@@ -59,6 +59,11 @@ public:
 		const std::string command = "SOUR" + std::to_string(source) + ":" + V_P + " ";
 		float new_value = current_value;
 
+		if (V_P == "PHAS") {
+			current_value = (int)current_value;
+			target_value = (int)target_value;
+		}
+
 
 		
 		for (volatile int i = 0; i < STEPS; i++) {
@@ -70,7 +75,7 @@ public:
 			std::this_thread::sleep_for(std::chrono::milliseconds(300));
 		}
 
-
+		std::cout << command + std::to_string(target_value) << std::endl;
 		rp_boards.send_txt(card, command + std::to_string(target_value));
 	}
 
