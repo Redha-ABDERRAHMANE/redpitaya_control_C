@@ -1,122 +1,100 @@
-#include"scpi.hpp"
+﻿#include "scpi.hpp"
 #include <array>
 #include <iostream>
 #include "waveGnPresets.hpp"
 #include "RpSignalGn.hpp"
 #include "controller.hpp"
+
 int main() {
-	const char* IP_PRIMARY = "169.254.112.159"; //Master board : rp - f0cafe.local
-	const char* IP_SECONDARY = "169.254.9.76"; //slave board 
-	std::array<float, 3> a = { 1,2,3.5 };
-	//for (float& x : a) { std::cout << (float)x << std::endl; }
-	//std::cout << "yolo0" << std::endl;
-	//scpi s("169.254.112.159");
-	//std::cout << "yolo1" << std::endl;
-	Controller j;
-	//std::cout << "yolo2" << std::endl;
-	/*std::string stringToSend = "";*/
-	//std::cout << "yolo3" << std::endl;
-	//RpSignalGn rp(IP_PRIMARY, IP_SECONDARY);
+    using p_array = std::array<float, 6>;
 
-	//rp.ramp_up_and_down(rp.rp_boards.rp_primary, 1, 1, 0.5, false);
+    const char* IP_PRIMARY = "169.254.112.159"; // Master board
+    const char* IP_SECONDARY = "169.254.9.76";     // Slave board
 
-	//while (true) {
+    Controller j;
+    RpSignalGn SignalGn(IP_PRIMARY, IP_SECONDARY);
+    waveGnPresets p;
 
-	//	 
-	//	if (Buttons::A== j.CheckControllerEvent()) {
-	//		stringToSend = "SOUR1:VOLT 0";
-	//		auto response =s.tx_txt(stringToSend);
-	//		std::this_thread::sleep_for(std::chrono::milliseconds(400));
-	//		stringToSend = "SOUR1:VOLT?";
-	//		std::cout << "response" << s.txrx_txt(stringToSend) <<std::endl;
+    int button_value;
+    p_array nextPreset;
+    p_array currentPreset;
+    float a, b, c, d, e, f; // for scanf
 
-	//	}
-	//}
-	
-	RpSignalGn SignalGn("169.254.112.159", "169.254.9.76");
-	waveGnPresets p;
-	int button_value;
-	while (true) {
-		button_value = j.CheckControllerEvent();
-		if (button_value == Buttons::SELECT) {
-			float a, b, c, d;
-			std::cout << " custom preset:" << std::endl;
-			scanf(" %f.2,%f.2,%f,%f.2,%f.2,%f", &a, &b, &c, &d);
+    while (true) {
+        button_value = j.CheckControllerEvent();
+        switch (button_value) {
 
-		}
-		else if (button_value == Buttons::START) {
-			float a, b;
-			std::cout << " custom phase:" << std::endl;
-			scanf(" %f,%f", &a, &b);
+        case Buttons::SELECT: {
+            // custom full‐preset entry
+            std::cout << " custom preset:\n";
+            scanf_s(" %f,%f,%f,%f,%f,%f", &a, &b, &c, &d, &e, &f);
+            nextPreset = { a, b, c, d, e, f };
+            currentPreset = p.get_currentPreset();
 
-			auto nextPreset = p.get_currentPreset();
-			nextPreset[2] = a;
-			nextPreset[5] = b;
+            // Debug print
+            for (auto& v : nextPreset)    std::cout << ' ' << v;
+            std::cout << "\n";
+            for (auto& v : currentPreset) std::cout << ' ' << v;
+            std::cout << "\n";
+
+            if (SignalGn.apply_preset_values(nextPreset, currentPreset)) {
+                p.set_previousPresetUsed(currentPreset);
+                p.set_currentPreset(nextPreset);
 
 
+            }
+            std::this_thread::sleep_for(std::chrono::milliseconds(500));
+            break;
+        }
 
+        case Buttons::START: {
+            // custom phase only
+            std::cout << " custom phase:\n";
+            scanf_s(" %f,%f", &a, &b);
+            nextPreset = p.get_currentPreset();
+            nextPreset[2] = a;  // primary phase
+            nextPreset[5] = b;  // secondary phase
+            currentPreset = p.get_currentPreset();
 
+            // Debug print
+            for (auto& v : nextPreset)    std::cout << ' ' << v;
+            std::cout << "\n";
+            for (auto& v : currentPreset) std::cout << ' ' << v;
+            std::cout << "\n";
 
-			auto currentPreset = p.get_currentPreset();
+            if (SignalGn.apply_preset_values(nextPreset, currentPreset)) {
+                p.set_previousPresetUsed(currentPreset);
+                p.set_currentPreset(nextPreset);
+            }
+            std::this_thread::sleep_for(std::chrono::milliseconds(500));
+            break;    // ← was missing!
+        }
 
-			for (auto& x : nextPreset) {
-				std::cout << " " << x << " ";
-			}std::cout << std::endl;
+        case -1:
+            // no event
+            break;
 
-			for (auto& x : currentPreset) {
-				std::cout << " " << x << " ";
-			}std::cout << std::endl;
-			if (SignalGn.apply_preset_values(nextPreset, currentPreset)) {
-				p.set_previousPresetUsed(currentPreset);
-				p.set_currentPreset(nextPreset);
+        default: {
+            // any other button → look up preset
+            nextPreset = p.get_preset(button_value);
+            currentPreset = p.get_currentPreset();
 
-			}
+            // Debug print
+            for (auto& v : nextPreset)    std::cout << ' ' << v;
+            std::cout << "\n";
+            for (auto& v : currentPreset) std::cout << ' ' << v;
+            std::cout << "\n";
 
+            if (SignalGn.apply_preset_values(nextPreset, currentPreset)) {
+                p.set_previousPresetUsed(currentPreset);
+                p.set_currentPreset(nextPreset);
+            }
+            std::this_thread::sleep_for(std::chrono::milliseconds(500));
+            break;
+        }
+        }
 
-
-
-		}
-
-		if (button_value != -1) {
-	
-			auto nextPreset = p.get_preset(button_value);
-
-
-			
-
-			auto currentPreset = p.get_currentPreset();
-
-			for (auto& x : nextPreset) {
-				std::cout << " " << x <<" ";
-			}std::cout << std::endl;
-
-			for (auto& x : currentPreset) {
-				std::cout << " " << x << " ";
-			}std::cout << std::endl;
-			if (SignalGn.apply_preset_values(nextPreset, currentPreset)) {
-				p.set_previousPresetUsed(currentPreset);
-				p.set_currentPreset(nextPreset);
-
-			}
-
-
-
-		}
-	}
-
-	
-
-
-
-
-
-
-
-
-	std::this_thread::sleep_for(std::chrono::milliseconds(500));
-
-		 
-
-
-
+        // uniform sleep
+        
+    }
 }
