@@ -142,6 +142,11 @@ public:
 		return -1;
 	}
 
+	void update_currentAndPreviousPreset(const p_array& currentPreset, const p_array& nextPreset) {
+		set_previousPresetUsed(currentPreset);
+		set_currentPreset(nextPreset);
+	}
+
 
 
 

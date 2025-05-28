@@ -63,8 +63,8 @@ int main() {
             std::cout << "\n";
 
             if (SignalGn.apply_preset_values(nextPreset, currentPreset)) {
-                p.set_previousPresetUsed(currentPreset);
-                p.set_currentPreset(nextPreset);
+                p.update_currentAndPreviousPreset(currentPreset,nextPreset);
+                
             }
             std::this_thread::sleep_for(std::chrono::milliseconds(500));
             break;    // ← was missing!
