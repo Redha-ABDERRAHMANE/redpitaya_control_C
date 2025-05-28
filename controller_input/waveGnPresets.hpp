@@ -133,10 +133,10 @@ public:
 		static const p_array& hat_right_preset = dictionary_bumperHatPreset.at(Buttons::HAT_RIGHT);
 
 
-		if (currentPreset == hat_up_preset || currentPreset == hat_down_preset) {
+		if (currentPreset == hat_up_preset || currentPreset == hat_down_preset || previousPresetUsed == hat_up_preset || previousPresetUsed == hat_down_preset) {
 			return check_Equals(button_value, Buttons::B, Buttons::X);
 		}
-		if (currentPreset== hat_left_preset || currentPreset== hat_right_preset) {
+		if (currentPreset== hat_left_preset || currentPreset== hat_right_preset || previousPresetUsed == hat_left_preset || previousPresetUsed == hat_right_preset) {
 			return check_Equals(button_value, Buttons::A, Buttons::Y);
 		}
 		return -1;
