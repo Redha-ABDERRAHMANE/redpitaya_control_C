@@ -24,7 +24,7 @@ class RpSignalGn
 	using p_array = std::array<float,6>;
 private:
 	
-	waveGnPresets presetFactory;
+	//waveGnPresets presetFactory;
 	RedpitayaCards rp_boards;
 
 
@@ -33,6 +33,8 @@ public:
 	
 	RpSignalGn(const char* primaryBoardIP, const char* secondaryBoardIP) :
 		rp_boards(primaryBoardIP, secondaryBoardIP, 5){
+
+		std::cout << "in" << std::endl;
 
 
 

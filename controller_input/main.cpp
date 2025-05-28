@@ -31,8 +31,12 @@ int main() {
                 nextPreset = p.get_preset(button_value);
             for (auto& v : nextPreset)    std::cout << ' ' << v;
             std::cout << "\n";
+
             for (auto& v : currentPreset) std::cout << ' ' << v;
             std::cout << "\n";
+
+            
+
 
             if (SignalGn.apply_preset_values(nextPreset, currentPreset)) { 
                 std::cout << "3" << std::endl;

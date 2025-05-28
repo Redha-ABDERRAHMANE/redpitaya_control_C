@@ -35,9 +35,6 @@ using p_array = std::array<float, 6>;
 using pair_p_array = std::pair<p_array, p_array>;
 
 private:
-	p_array currentPreset = {};
-	p_array previousPresetUsed = {};
-
 	std::map<int, p_array> dictionary_bumperHatPreset{
 	  { Buttons::BUMPER_LEFT,  { AMPLITUDE_0,   AMPLITUDE_0,   PHASE_0,
 								 AMPLITUDE_0,   AMPLITUDE_0,   PHASE_0   } },
@@ -75,10 +72,12 @@ private:
 		  }
 		}
 	};
+	p_array currentPreset = dictionary_bumperHatPreset.at(Buttons::BUMPER_LEFT);
+	p_array previousPresetUsed = dictionary_bumperHatPreset.at(Buttons::BUMPER_LEFT);
 
 
 public:
-	waveGnPresets():currentPreset(dictionary_bumperHatPreset.at(Buttons::BUMPER_LEFT)),previousPresetUsed(currentPreset){}
+	waveGnPresets(){}
 
 	const p_array& get_currentPreset()const {
 		return currentPreset;
