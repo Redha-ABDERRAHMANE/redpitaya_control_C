@@ -86,41 +86,41 @@ public:
 
 	}
 	//TODO COMPLETE THIS METHOD
-	const p_array apply_preset_values(p_array&preset, const std::array<float, 6>& previous_preset_used){
-		if (preset == previous_preset_used) {
+	bool apply_preset_values(p_array& nextPreset, const p_array& currentPreset){
+		if (nextPreset == currentPreset) {
 			std::cout << "same preset:" << std::endl;
 			std::cout << "preset:" << std::endl;
-			for (auto& x : preset) {
+			for (auto& x : nextPreset){
 				std::cout << x << " ";
 			}
 		
 
 
 			std::cout << "\n previous preset:" << std::endl;
-			for (auto& x : previous_preset_used) {
+			for (auto& x : currentPreset) {
 				std::cout << x << " ";
 			}
 			std::cout<<std::endl;
 
-			return previous_preset_used; }
+			return false; }
 
 		std::vector<std::thread> threadVector;
 		threadVector.reserve(8);
 
-		threadVector.emplace_back(&RpSignalGn::detect_ramp_up_or_down,this, PRIMARY_BOARD, preset[2], previous_preset_used[2], SOURCE_1, "PHAS");
-		threadVector.emplace_back(&RpSignalGn::detect_ramp_up_or_down,this, PRIMARY_BOARD, preset[2], previous_preset_used[2], SOURCE_2, "PHAS");
-		threadVector.emplace_back(&RpSignalGn::detect_ramp_up_or_down,this, SECONDARY_BOARD, preset[5], previous_preset_used[5], SOURCE_1, "PHAS");
-		threadVector.emplace_back(&RpSignalGn::detect_ramp_up_or_down,this, SECONDARY_BOARD, preset[5], previous_preset_used[5], SOURCE_2, "PHAS");
+		threadVector.emplace_back(&RpSignalGn::detect_ramp_up_or_down,this, PRIMARY_BOARD, nextPreset[2], currentPreset[2], SOURCE_1, "PHAS");
+		threadVector.emplace_back(&RpSignalGn::detect_ramp_up_or_down,this, PRIMARY_BOARD, nextPreset[2], currentPreset[2], SOURCE_2, "PHAS");
+		threadVector.emplace_back(&RpSignalGn::detect_ramp_up_or_down,this, SECONDARY_BOARD, nextPreset[5], currentPreset[5], SOURCE_1, "PHAS");
+		threadVector.emplace_back(&RpSignalGn::detect_ramp_up_or_down,this, SECONDARY_BOARD, nextPreset[5], currentPreset[5], SOURCE_2, "PHAS");
 
-		threadVector.emplace_back(&RpSignalGn::detect_ramp_up_or_down,this, PRIMARY_BOARD, preset[0], previous_preset_used[0], SOURCE_1, "VOLT");
-		threadVector.emplace_back(&RpSignalGn::detect_ramp_up_or_down,this, PRIMARY_BOARD, preset[1], previous_preset_used[1], SOURCE_2, "VOLT");
-		threadVector.emplace_back(&RpSignalGn::detect_ramp_up_or_down,this, SECONDARY_BOARD, preset[3], previous_preset_used[3], SOURCE_1, "VOLT");
-		threadVector.emplace_back(&RpSignalGn::detect_ramp_up_or_down,this, SECONDARY_BOARD, preset[4], previous_preset_used[4], SOURCE_2, "VOLT");
+		threadVector.emplace_back(&RpSignalGn::detect_ramp_up_or_down,this, PRIMARY_BOARD, nextPreset[0], currentPreset[0], SOURCE_1, "VOLT");
+		threadVector.emplace_back(&RpSignalGn::detect_ramp_up_or_down,this, PRIMARY_BOARD, nextPreset[1], currentPreset[1], SOURCE_2, "VOLT");
+		threadVector.emplace_back(&RpSignalGn::detect_ramp_up_or_down,this, SECONDARY_BOARD, nextPreset[3], currentPreset[3], SOURCE_1, "VOLT");
+		threadVector.emplace_back(&RpSignalGn::detect_ramp_up_or_down,this, SECONDARY_BOARD, nextPreset[4], currentPreset[4], SOURCE_2, "VOLT");
 
 
 		for (std::thread& t : threadVector) { t.join(); }
 		std::this_thread::sleep_for(std::chrono::milliseconds(500));
-		return preset;
+		return true;
 
 
 

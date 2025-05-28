@@ -47,7 +47,7 @@ public:
 
 
 
-		dictionary_bumperHatPreset[Buttons::BUMPER_LEFT] = { AMPLITUDE_0, AMPLITUDE_0 ,PHASE_0 ,AMPLITUDE_0 ,AMPLITUDE_0 ,PHASE_50 };
+		dictionary_bumperHatPreset[Buttons::BUMPER_LEFT] = { AMPLITUDE_0, AMPLITUDE_0 ,PHASE_0 ,AMPLITUDE_0 ,AMPLITUDE_0 ,PHASE_0 };
 		dictionary_bumperHatPreset[Buttons::BUMPER_RIGHT] = { AMPLITUDE_MAX,AMPLITUDE_MAX,PHASE_0,AMPLITUDE_MAX,AMPLITUDE_MAX,PHASE_50 };
 
 		dictionary_bumperHatPreset[Buttons::HAT_UP] = { a,a,PHASE_0,c,AMPLITUDE_0,PHASE_50 };
@@ -82,7 +82,8 @@ public:
 			{ d,AMPLITUDE_0,PHASE_0,b,b,PHASE_50 }     // preset_hat_right_button_a
 		};
 
-		currentPreset = get_preset(Buttons::BUMPER_RIGHT);
+		currentPreset = get_preset(Buttons::BUMPER_LEFT);
+		previousPresetUsed = currentPreset;
 	}
 
 	const p_array& get_currentPreset()const {
@@ -109,7 +110,7 @@ public:
 
 	const p_array& get_preset(const int& button_value){
 
-		if (Controller::isButton(button_value) && ! check_lastPresetCoherence(button_value)) { return currentPreset; }
+		if (Controller::isButton(button_value) && check_lastPresetCoherence(button_value)==-1) { return currentPreset; }
 
 		static const p_array& hat_up_preset = dictionary_bumperHatPreset.at(Buttons::HAT_UP);
 		static const p_array& hat_left_preset = dictionary_bumperHatPreset.at(Buttons::HAT_LEFT);
@@ -118,10 +119,10 @@ public:
 
 		if (WithInInterval(Buttons::A, button_value, Buttons::Y)) {
 			const std::pair<p_array, p_array>& preset_pair = dictionary_buttonPreset.at(button_value);
-			return currentPreset = isUp_or_left ? preset_pair.first : preset_pair.second;
+			return isUp_or_left ? preset_pair.first : preset_pair.second;
 
 		}
-		return currentPreset = dictionary_bumperHatPreset.at(button_value);
+		return dictionary_bumperHatPreset.at(button_value);
 
 	}
 
@@ -131,13 +132,14 @@ public:
 		static const p_array& hat_left_preset = dictionary_bumperHatPreset.at(Buttons::HAT_LEFT);
 		static const p_array& hat_right_preset = dictionary_bumperHatPreset.at(Buttons::HAT_RIGHT);
 
+
 		if (currentPreset == hat_up_preset || currentPreset == hat_down_preset) {
 			return check_Equals(button_value, Buttons::B, Buttons::X);
 		}
-		if (currentPreset == hat_left_preset || currentPreset == hat_right_preset) {
+		if (currentPreset== hat_left_preset || currentPreset== hat_right_preset) {
 			return check_Equals(button_value, Buttons::A, Buttons::Y);
 		}
-		return false;
+		return -1;
 	}
 
 

@@ -3,6 +3,7 @@
 
 #define AMPLITUDE_0 0.0f
 #define PHASE_50 50
+#define PHASE_0  0
 #define SOURCE_1 1
 #define SOURCE_2 2
 #define PRIMARY_BOARD 1
@@ -21,8 +22,8 @@ public:
         set_DaisyChain_SourceTrigger_MasterBoard();
         set_DaisyChain_SourceTrigger_SlaveBoard();
         verify_board_daisy_configuration();
-        set_InitialSource_sineWave_parameters(PRIMARY_BOARD, frequency,1.0);
-        set_InitialSource_sineWave_parameters(SECONDARY_BOARD, frequency,1.0);
+        set_InitialSource_sineWave_parameters(PRIMARY_BOARD, frequency,0.0);
+        set_InitialSource_sineWave_parameters(SECONDARY_BOARD, frequency,0.0);
         enable_board_outputs();
         set_arm_trigger_slave_board(rp_secondary);
         displayBoardsConfig();
@@ -86,7 +87,7 @@ public:
     }
 
     // Amplitude , frequency and phase are fixed at the start of the code.No need to put them as parameters    
-    void set_InitialSource_sineWave_parameters(const int card, const int frequency, const float amplitude = AMPLITUDE_0, const int phase = PHASE_50) {
+    void set_InitialSource_sineWave_parameters(const int card, const int frequency, const float amplitude = AMPLITUDE_0, const int phase = PHASE_0) {
         scpi& rp_board = card == PRIMARY_BOARD ? rp_primary : rp_secondary;
         for (int source = 1; source <= 2; source++) {
             rp_board.tx_txt("SOUR" + std::to_string(source) + ":FUNC SINE");
