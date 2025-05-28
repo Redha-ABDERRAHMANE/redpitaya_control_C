@@ -14,8 +14,9 @@
 #define BUTTON	0
 #define HAT		1
 
-extern std::map<int, std::string> ButtonsMap;
 
+
+// add to compilation option : -lwinmm
 enum Buttons {
 	A = VK_PAD_A, B = VK_PAD_B, X = VK_PAD_X, Y = VK_PAD_Y,
 
@@ -23,11 +24,9 @@ enum Buttons {
 
 	BUMPER_RIGHT = VK_PAD_RSHOULDER, BUMPER_LEFT = VK_PAD_LSHOULDER,
 
-	SELECT= VK_PAD_START, START= VK_PAD_BACK
+	SELECT = VK_PAD_START, START = VK_PAD_BACK
 
 };
-
-// add to compilation option : -lwinmm
 
 class Controller
 {
@@ -39,19 +38,71 @@ private:
 
 	XINPUT_STATE state; // Structure to hold the state of the controller
 
-	bool validControllerButton(const int& button_value);
+	int lastDpadUsed = -1;
+
+	bool check_validControllerButtonAndCoherence(const int& button_value) {
+		if (WithInInterval(Buttons::HAT_UP, button_value, Buttons::HAT_RIGHT)) {
+			if (button_value != lastDpadUsed) {
+				lastDpadUsed = button_value;
+				return true;
+			}
+			return false;
+		}
+		switch (button_value) {
+
+		case  Buttons::A:
+		case  Buttons::Y:  return lastDpadUsed == Buttons::HAT_LEFT || lastDpadUsed == Buttons::HAT_RIGHT; break;
+
+		case  Buttons::B:
+		case  Buttons::X:  return lastDpadUsed == Buttons::HAT_DOWN || lastDpadUsed == Buttons::HAT_LEFT; break;
+		default: return false; break;
+
+
+
+		}
+
+
+
+	}
 
 	// To Use only after checkButtonValue is verified
 	// 0: button    | 1 : hat
-	int buttonOrHat(const int& button_value);
+	int buttonOrHat(const int& button_value) {
+		return WithInInterval(Buttons::A, button_value, Buttons::Y) ? BUTTON : HAT;
+	}
 
 public:
-	Controller();
-	const int CheckControllerEvent();
+	Controller() :keyStroke{}, state() {
+
+		DWORD dwResult = XInputGetState(dwControllerIndex, &state);// Variable to hold the result of XInput functions
+
+		if (dwResult == ERROR_SUCCESS) {
+			std::cout << "Controller is connected." << std::endl;
+		}
+		else {
+			// Controller is not connected
+			std::cout << "Controller  is not connected." << std::endl;
+		}
+	}
+	const int CheckControllerEvent() {
+		DWORD dwReserved = 0;
+		DWORD KeyStroke_result = XInputGetKeystroke(dwControllerIndex, dwReserved, (PXINPUT_KEYSTROKE)&keyStroke);
+
+		return  (keyStroke.Flags == XINPUT_KEYSTROKE_KEYDOWN && check_validControllerButtonAndCoherence(keyStroke.VirtualKey)) ? keyStroke.VirtualKey : -1;
+
+
+
+	}
 	static bool isButton(const int& button_value) {
 		return WithInInterval(Buttons::A, button_value, Buttons::Y);
 
 	}
-	~Controller();
+
+
+	~Controller() {
+		std::cout << "end" << std::endl;
+	}
 
 };
+
+

@@ -24,9 +24,6 @@
     <ClCompile Include="controller.hpp">
       <Filter>Header Files</Filter>
     </ClCompile>
-    <ClCompile Include="controller.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="waveGnPresets.hpp">

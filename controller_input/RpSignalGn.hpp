@@ -24,7 +24,7 @@ class RpSignalGn
 	using p_array = std::array<float,6>;
 private:
 	
-	//waveGnPresets presetFactory;
+	waveGnPresets presetFactory;
 	RedpitayaCards rp_boards;
 
 
@@ -87,25 +87,10 @@ public:
 	}
 	//TODO COMPLETE THIS METHOD
 	bool apply_preset_values(p_array& nextPreset, const p_array& currentPreset){
-		if (nextPreset == currentPreset) {
-			std::cout << "same preset:" << std::endl;
-			std::cout << "preset:" << std::endl;
-			for (auto& x : nextPreset){
-				std::cout << x << " ";
-			}
-		
-
-
-			std::cout << "\n previous preset:" << std::endl;
-			for (auto& x : currentPreset) {
-				std::cout << x << " ";
-			}
-			std::cout<<std::endl;
-
-			return false; }
-
 		std::vector<std::thread> threadVector;
 		threadVector.reserve(8);
+
+		// In the experiment source 1 and 2 of the secondary board are inverted 
 
 		threadVector.emplace_back(&RpSignalGn::detect_ramp_up_or_down,this, PRIMARY_BOARD, nextPreset[2], currentPreset[2], SOURCE_1, "PHAS");
 		threadVector.emplace_back(&RpSignalGn::detect_ramp_up_or_down,this, PRIMARY_BOARD, nextPreset[2], currentPreset[2], SOURCE_2, "PHAS");
@@ -114,8 +99,12 @@ public:
 
 		threadVector.emplace_back(&RpSignalGn::detect_ramp_up_or_down,this, PRIMARY_BOARD, nextPreset[0], currentPreset[0], SOURCE_1, "VOLT");
 		threadVector.emplace_back(&RpSignalGn::detect_ramp_up_or_down,this, PRIMARY_BOARD, nextPreset[1], currentPreset[1], SOURCE_2, "VOLT");
-		threadVector.emplace_back(&RpSignalGn::detect_ramp_up_or_down,this, SECONDARY_BOARD, nextPreset[3], currentPreset[3], SOURCE_1, "VOLT");
-		threadVector.emplace_back(&RpSignalGn::detect_ramp_up_or_down,this, SECONDARY_BOARD, nextPreset[4], currentPreset[4], SOURCE_2, "VOLT");
+
+
+
+		//WARNING : THE SOURCES IN THE PRESET ARRAY ARE INVERTED FOR THE SECONDARY BOARD : nextPreset[3] -> GO TO SOURCE_2 ,nextPreset[4] -> GO TO SOURCE_1
+		threadVector.emplace_back(&RpSignalGn::detect_ramp_up_or_down,this, SECONDARY_BOARD, nextPreset[3], currentPreset[3], SOURCE_2, "VOLT");
+		threadVector.emplace_back(&RpSignalGn::detect_ramp_up_or_down,this, SECONDARY_BOARD, nextPreset[4], currentPreset[4], SOURCE_1, "VOLT");
 
 
 		for (std::thread& t : threadVector) { t.join(); }

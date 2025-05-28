@@ -123,7 +123,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="controller.cpp" />
     <ClCompile Include="controller.hpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="scpi.hpp" />
