@@ -43,20 +43,20 @@ public:
 	}
 
 
-	bool check_presetVoltageValueBounds(const std::array<float, 4>& presetArray)const {
-		std::array<int, 4> indexes = { 0,1,2,3 };
-		if (presetArray.size() == 6) {
-			indexes = { 0,1,3,4 };
-		}
+	//bool check_presetVoltageValueBounds(const std::array<float, 4>& presetArray)const {
+	//	std::array<int, 4> indexes = { 0,1,2,3 };
+	//	if (presetArray.size() == 6) {
+	//		indexes = { 0,1,3,4 };
+	//	}
 
-		for (const float& amplitude : presetArray) {
-			if (!check_ValueBounds(amplitude, AMPLITUDE_0, AMPLITUDE_MAX)) { return false; }
-		}
-		return true;
-	}
+	//	for (const float& amplitude : presetArray) {
+	//		if (!check_ValueBounds(amplitude, AMPLITUDE_0, AMPLITUDE_MAX)) { return false; }
+	//	}
+	//	return true;
+	//}
 
 
-	void ramp_up_and_down(const int& card, int source, float current_value, float target_value, const std::string& V_P = "VOLT") {
+	void ramp_up_and_down(const uint8_t& card, uint8_t source, float current_value, float target_value, const std::string& V_P = "VOLT") {
 		float step_size = (target_value - current_value) / STEPS;
 		const std::string command = "SOUR" + std::to_string(source) + ":" + V_P + " ";
 		float new_value = current_value;
@@ -68,7 +68,7 @@ public:
 
 
 		
-		for (volatile int i = 0; i < STEPS; i++) {
+		for (uint8_t i = 0; i < STEPS; i++) {
 			
 			new_value += step_size;
 
@@ -81,7 +81,7 @@ public:
 		rp_boards.send_txt(card, command + std::to_string(target_value));
 	}
 
-	void detect_ramp_up_or_down(const int& card, const float& target_value, const float& current_value,const int& source, const std::string& V_P = "VOLT"){
+	void detect_ramp_up_or_down(const uint8_t& card, const float& target_value, const float& current_value,const uint8_t& source, const std::string& V_P = "VOLT"){
 		if (target_value != current_value){
 			ramp_up_and_down(card, source, current_value, target_value, V_P);
 		}
@@ -89,27 +89,27 @@ public:
 	}
 	//TODO COMPLETE THIS METHOD
 	bool apply_preset_values(p_array& nextPreset, const p_array& currentPreset){
-		std::vector<std::thread> threadVector;
-		threadVector.reserve(8);
-
 		// In the experiment source 1 and 2 of the secondary board are inverted 
-
-		threadVector.emplace_back(&RpSignalGn::detect_ramp_up_or_down,this, PRIMARY_BOARD, nextPreset[2], currentPreset[2], SOURCE_1, "PHAS");
-		threadVector.emplace_back(&RpSignalGn::detect_ramp_up_or_down,this, PRIMARY_BOARD, nextPreset[2], currentPreset[2], SOURCE_2, "PHAS");
-		threadVector.emplace_back(&RpSignalGn::detect_ramp_up_or_down,this, SECONDARY_BOARD, nextPreset[5], currentPreset[5], SOURCE_1, "PHAS");
-		threadVector.emplace_back(&RpSignalGn::detect_ramp_up_or_down,this, SECONDARY_BOARD, nextPreset[5], currentPreset[5], SOURCE_2, "PHAS");
-
-		threadVector.emplace_back(&RpSignalGn::detect_ramp_up_or_down,this, PRIMARY_BOARD, nextPreset[0], currentPreset[0], SOURCE_1, "VOLT");
-		threadVector.emplace_back(&RpSignalGn::detect_ramp_up_or_down,this, PRIMARY_BOARD, nextPreset[1], currentPreset[1], SOURCE_2, "VOLT");
-
-
-
 		//WARNING : THE SOURCES IN THE PRESET ARRAY ARE INVERTED FOR THE SECONDARY BOARD : nextPreset[3] -> GO TO SOURCE_2 ,nextPreset[4] -> GO TO SOURCE_1
-		threadVector.emplace_back(&RpSignalGn::detect_ramp_up_or_down,this, SECONDARY_BOARD, nextPreset[3], currentPreset[3], SOURCE_2, "VOLT");
-		threadVector.emplace_back(&RpSignalGn::detect_ramp_up_or_down,this, SECONDARY_BOARD, nextPreset[4], currentPreset[4], SOURCE_1, "VOLT");
 
 
-		for (std::thread& t : threadVector) { t.join(); }
+		std::array<std::thread, 8> threadArray = {
+		std::thread(&RpSignalGn::detect_ramp_up_or_down,this, PRIMARY_BOARD, nextPreset[2], currentPreset[2], SOURCE_1, "PHAS"),
+		std::thread(&RpSignalGn::detect_ramp_up_or_down,this, PRIMARY_BOARD, nextPreset[2], currentPreset[2], SOURCE_2, "PHAS"),
+		std::thread(&RpSignalGn::detect_ramp_up_or_down,this, SECONDARY_BOARD, nextPreset[5], currentPreset[5], SOURCE_1, "PHAS"),
+		std::thread(&RpSignalGn::detect_ramp_up_or_down,this, SECONDARY_BOARD, nextPreset[5], currentPreset[5], SOURCE_2, "PHAS"),
+
+		std::thread(&RpSignalGn::detect_ramp_up_or_down,this, PRIMARY_BOARD, nextPreset[0], currentPreset[0], SOURCE_1, "VOLT"),
+		std::thread(&RpSignalGn::detect_ramp_up_or_down,this, PRIMARY_BOARD, nextPreset[1], currentPreset[1], SOURCE_2, "VOLT"),
+
+
+
+		std::thread(&RpSignalGn::detect_ramp_up_or_down,this, SECONDARY_BOARD, nextPreset[3], currentPreset[3], SOURCE_2, "VOLT"),
+		std::thread(&RpSignalGn::detect_ramp_up_or_down,this, SECONDARY_BOARD, nextPreset[4], currentPreset[4], SOURCE_1, "VOLT"),
+		};
+
+
+		for (std::thread& t : threadArray) { t.join(); }
 		std::this_thread::sleep_for(std::chrono::milliseconds(500));
 		return true;
 

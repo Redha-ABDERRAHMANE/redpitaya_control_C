@@ -16,7 +16,6 @@
 
 
 
-// add to compilation option : -lwinmm
 enum Buttons {
 	A = VK_PAD_A, B = VK_PAD_B, X = VK_PAD_X, Y = VK_PAD_Y,
 
@@ -41,6 +40,7 @@ private:
 	int lastDpadUsed = -1;
 
 	bool check_validControllerButtonAndCoherence(const int& button_value) {
+		if (WithInInterval(Buttons::BUMPER_RIGHT, button_value, Buttons::BUMPER_LEFT)) return true;
 		if (WithInInterval(Buttons::HAT_UP, button_value, Buttons::HAT_RIGHT)) {
 			if (button_value != lastDpadUsed) {
 				lastDpadUsed = button_value;

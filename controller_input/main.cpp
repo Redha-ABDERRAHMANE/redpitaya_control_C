@@ -31,6 +31,7 @@ int main() {
                 nextPreset = p.get_preset(button_value);
             for (auto& v : nextPreset)    std::cout << ' ' << v;
             std::cout << "\n";
+            currentPreset = p.get_currentPreset();
 
             for (auto& v : currentPreset) std::cout << ' ' << v;
             std::cout << "\n";
