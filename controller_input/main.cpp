@@ -28,7 +28,8 @@ int main() {
         button_value = j.CheckControllerEvent();
         if(button_value !=-1){
             std::cout << "2" << std::endl;
-                nextPreset = p.get_preset(button_value);
+            p.set_nextPreset(button_value);
+            nextPreset = p.get_nextPreset();
             for (auto& v : nextPreset)    std::cout << ' ' << v;
             std::cout << "\n";
             currentPreset = p.get_currentPreset();
@@ -41,7 +42,7 @@ int main() {
 
             if (SignalGn.apply_preset_values(nextPreset, currentPreset)) { 
                 std::cout << "3" << std::endl;
-                p.update_currentAndPreviousPreset(currentPreset, nextPreset);
+                p.update_currentAndPreviousPreset();
                 std::this_thread::sleep_for(std::chrono::milliseconds(500));
             }
 

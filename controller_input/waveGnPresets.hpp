@@ -74,6 +74,7 @@ private:
 	};
 	p_array currentPreset = dictionary_bumperHatPreset.at(Buttons::BUMPER_LEFT);
 	p_array previousPresetUsed = dictionary_bumperHatPreset.at(Buttons::BUMPER_LEFT);
+	p_array nextPreset = {};
 
 
 public:
@@ -85,23 +86,22 @@ public:
 	const p_array& get_previousPresetUsed()const {
 		return previousPresetUsed;
 	}
+	const p_array& get_nextPreset()const {
+		return nextPreset;
+	}
 	void set_previousPresetUsed(const p_array preset) {
 		previousPresetUsed = preset;
 	}
 
-	void set_currentPreset(const int& button_value) {
-		currentPreset = get_preset(button_value);
-	}
+	//void set_currentPreset(const int& button_value) {
+	//	currentPreset = get_preset(button_value);
+	//}
 	void set_currentPreset(const p_array preset) {
 		currentPreset = preset;
 	}
 
 
-
-
-
-
-	const p_array& get_preset(const int& button_value){
+	const p_array& set_nextPreset(const int& button_value){
 
 
 		static const p_array& hat_up_preset = dictionary_bumperHatPreset.at(Buttons::HAT_UP);
@@ -114,13 +114,13 @@ public:
 			return isUp_or_left ? preset_pair.first : preset_pair.second;
 
 		}
-		return dictionary_bumperHatPreset.at(button_value);
+		nextPreset= dictionary_bumperHatPreset.at(button_value);
 
 	}
 
 
 
-	void update_currentAndPreviousPreset(const p_array& currentPreset, const p_array& nextPreset) {
+	void update_currentAndPreviousPreset() {
 		set_previousPresetUsed(currentPreset);
 		set_currentPreset(nextPreset);
 	}
