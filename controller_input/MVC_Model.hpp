@@ -60,7 +60,7 @@ public:
         if (SignalGn.apply_preset_values(nextPreset, currentPreset)) {
             std::cout << "entered" << std::endl;
             GnPresets.update_currentAndPreviousPreset();
-            notifyObserver(button_value);
+            //notifyObserver(button_value);
             std::this_thread::sleep_for(std::chrono::milliseconds(500));
         }
     }
