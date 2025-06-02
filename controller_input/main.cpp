@@ -18,10 +18,12 @@ int main() {
 
 
     do {
-        std::cout << "enter l or r or u or d" << std::endl;
+        /*std::cout << "enter l or r or u or d" << std::endl;
         scanf_s(" %c", &input, 1);
         std::cout << m.at(input) << std::endl;
-        model.get_and_applyPreset(m.at(input));
+        model.get_and_applyPreset(m.at(input));*/
+
+        model.check_newInput();
 
     } while (true);
 }
