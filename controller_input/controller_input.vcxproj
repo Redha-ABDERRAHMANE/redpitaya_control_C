@@ -125,9 +125,13 @@
   <ItemGroup>
     <ClCompile Include="controller.hpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MVC_Controller.hpp" />
     <ClCompile Include="scpi.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="MVC_Model.hpp" />
+    <ClInclude Include="Observable.hpp" />
+    <ClInclude Include="observer.hpp" />
     <ClInclude Include="RedpitayaCard.hpp" />
     <ClInclude Include="RpSignalGn.hpp" />
     <ClInclude Include="waveGnPresets.hpp" />

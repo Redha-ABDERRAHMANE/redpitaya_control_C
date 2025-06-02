@@ -101,7 +101,7 @@ public:
 	}
 
 
-	const p_array& set_nextPreset(const int& button_value){
+	void set_nextPreset(const int& button_value){
 
 
 		static const p_array& hat_up_preset = dictionary_bumperHatPreset.at(Buttons::HAT_UP);
@@ -111,7 +111,8 @@ public:
 
 		if (WithInInterval(Buttons::A, button_value, Buttons::Y)) {
 			const std::pair<p_array, p_array>& preset_pair = dictionary_buttonPreset.at(button_value);
-			return isUp_or_left ? preset_pair.first : preset_pair.second;
+			nextPreset = isUp_or_left ? preset_pair.first : preset_pair.second;
+			return;
 
 		}
 		nextPreset= dictionary_bumperHatPreset.at(button_value);

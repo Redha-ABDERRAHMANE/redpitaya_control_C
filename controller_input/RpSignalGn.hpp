@@ -1,5 +1,5 @@
 #pragma once
-#include "waveGnPresets.hpp"
+//#include "waveGnPresets.hpp"
 #include "scpi.hpp"
 #include <array>
 #include <thread>

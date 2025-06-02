@@ -24,6 +24,9 @@
     <ClCompile Include="controller.hpp">
       <Filter>Header Files</Filter>
     </ClCompile>
+    <ClCompile Include="MVC_Controller.hpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="waveGnPresets.hpp">
@@ -33,6 +36,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="RedpitayaCard.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MVC_Model.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Observable.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="observer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
