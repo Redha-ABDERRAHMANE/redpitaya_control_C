@@ -8,6 +8,8 @@
 #include <cmath>
 #include <vector>
 #include "RedpitayaCard.hpp"
+#include <future>
+
 
 #define SOURCE_1 1
 #define SOURCE_2 2
@@ -92,6 +94,8 @@ public:
 		// In the experiment source 1 and 2 of the secondary board are inverted 
 		//WARNING : THE SOURCES IN THE PRESET ARRAY ARE INVERTED FOR THE SECONDARY BOARD : nextPreset[3] -> GO TO SOURCE_2 ,nextPreset[4] -> GO TO SOURCE_1
 
+#define TRYANDERROR 1
+#if TRYANDERROR==0
 
 		std::array<std::thread, 8> threadArray = {
 		std::thread(&RpSignalGn::detect_ramp_up_or_down,this, PRIMARY_BOARD, nextPreset[2], currentPreset[2], SOURCE_1, "PHAS"),
@@ -108,13 +112,31 @@ public:
 		std::thread(&RpSignalGn::detect_ramp_up_or_down,this, SECONDARY_BOARD, nextPreset[4], currentPreset[4], SOURCE_1, "VOLT"),
 		};
 
-
 		for (std::thread& t : threadArray) { t.join(); }
+		
+		
+#else
+		std::array<std::future<void>, 8> threadArray = {
+		std::async(std::launch::async,&RpSignalGn::detect_ramp_up_or_down,this, PRIMARY_BOARD, nextPreset[2], currentPreset[2], SOURCE_1, "PHAS"),
+		std::async(std::launch::async,&RpSignalGn::detect_ramp_up_or_down,this, PRIMARY_BOARD, nextPreset[2], currentPreset[2], SOURCE_2, "PHAS"),
+		std::async(std::launch::async,&RpSignalGn::detect_ramp_up_or_down,this, SECONDARY_BOARD, nextPreset[5], currentPreset[5], SOURCE_1, "PHAS"),
+		std::async(std::launch::async,&RpSignalGn::detect_ramp_up_or_down,this, SECONDARY_BOARD, nextPreset[5], currentPreset[5], SOURCE_2, "PHAS"),
+
+		std::async(std::launch::async,&RpSignalGn::detect_ramp_up_or_down,this, PRIMARY_BOARD, nextPreset[0], currentPreset[0], SOURCE_1, "VOLT"),
+		std::async(std::launch::async,&RpSignalGn::detect_ramp_up_or_down,this, PRIMARY_BOARD, nextPreset[1], currentPreset[1], SOURCE_2, "VOLT"),
+
+
+
+		std::async(std::launch::async,&RpSignalGn::detect_ramp_up_or_down,this, SECONDARY_BOARD, nextPreset[3], currentPreset[3], SOURCE_2, "VOLT"),
+		std::async(std::launch::async,&RpSignalGn::detect_ramp_up_or_down,this, SECONDARY_BOARD, nextPreset[4], currentPreset[4], SOURCE_1, "VOLT"),
+		};
+
+		for (std::future<void>& thread : threadArray) {thread.get();}
+
+
+#endif
 		std::this_thread::sleep_for(std::chrono::milliseconds(500));
 		return true;
-
-
-
 		//
 
 
