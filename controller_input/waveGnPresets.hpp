@@ -36,18 +36,12 @@ using pair_p_array = std::pair<p_array, p_array>;
 
 private:
 	std::map<int, p_array> dictionary_bumperHatPreset{
-	  { Buttons::BUMPER_LEFT,  { AMPLITUDE_0,   AMPLITUDE_0,   PHASE_0,
-								 AMPLITUDE_0,   AMPLITUDE_0,   PHASE_0   } },
-	  { Buttons::BUMPER_RIGHT, { 0.4f,          0.2f,          PHASE_0,
-								 0.35f,         0.2f,          PHASE_50 } },
-	  { Buttons::HAT_UP,       { 0.4f,          0.2f,          PHASE_0,
-								 0.5f,          AMPLITUDE_0,   PHASE_50 } },
-	  { Buttons::HAT_DOWN,     { 0.4f,          0.2f,          PHASE_140,
-								 0.5f,          AMPLITUDE_0,   PHASE_50 } },
-	  { Buttons::HAT_RIGHT,    { 0.75f,         AMPLITUDE_0,   PHASE_0,
-								 0.35f,         0.2f,          PHASE_50 } },
-	  { Buttons::HAT_LEFT,     { AMPLITUDE_0,   0.35f,         PHASE_0,
-								 0.35f,         0.2f,          PHASE_50 } }
+	  { Buttons::BUMPER_LEFT,  { AMPLITUDE_0,   AMPLITUDE_0,   PHASE_0,   AMPLITUDE_0,   AMPLITUDE_0,   PHASE_0   } },
+	  { Buttons::BUMPER_RIGHT, { 0.4f,          0.2f,          PHASE_0,   0.35f,         0.2f,          PHASE_50 } },
+	  { Buttons::HAT_UP,       { 0.4f,          0.2f,          PHASE_0,   0.5f,          AMPLITUDE_0,   PHASE_50 } },
+	  { Buttons::HAT_DOWN,     { 0.4f,          0.2f,          PHASE_140, 0.5f,          AMPLITUDE_0,   PHASE_50 } },
+	  { Buttons::HAT_RIGHT,    { 0.75f,         AMPLITUDE_0,   PHASE_0,   0.35f,         0.2f,          PHASE_50 } },
+	  { Buttons::HAT_LEFT,     { AMPLITUDE_0,   0.35f,         PHASE_0,   0.35f,         0.2f,          PHASE_50 } }
 	};
 	// Button combinations - each button has 2 presets (up/down or left/right variants)
 	std::map<int, pair_p_array> dictionary_buttonPreset{
@@ -57,8 +51,8 @@ private:
 		  }
 		},
 		{ Buttons::B, {
-			{ 0.4f, 0.2f, PHASE_0,   0.5f,       AMPLITUDE_0, PHASE_50 },  // up‐B
-			{ 0.4f, 0.2f, PHASE_140, 0.5f,       AMPLITUDE_0, PHASE_50 }   // down‐B
+			{ 0.4f, 0.2f, PHASE_0,   0.5f,AMPLITUDE_0, PHASE_50 },  // up‐B
+			{ 0.4f, 0.2f, PHASE_140, 0.5f,AMPLITUDE_0, PHASE_50 }   // down‐B
 		  }
 		},
 		{ Buttons::Y, {
@@ -106,12 +100,9 @@ public:
 
 		static const p_array& hat_up_preset = dictionary_bumperHatPreset.at(Buttons::HAT_UP);
 		static const p_array& hat_left_preset = dictionary_bumperHatPreset.at(Buttons::HAT_LEFT);
-		
-		bool isUp_or_left = (currentPreset == hat_up_preset) || (currentPreset == hat_left_preset);
-		std::cout << "bool " << isUp_or_left << std::endl;
 
-
-		if (WithInInterval(Buttons::A, button_value, Buttons::Y)) {
+		if (Controller::isButton(button_value)) {
+			bool isUp_or_left = (currentPreset == hat_up_preset) || (currentPreset == hat_left_preset);
 			const std::pair<p_array, p_array>& preset_pair = dictionary_buttonPreset.at(button_value);
 			nextPreset = isUp_or_left ? preset_pair.first : preset_pair.second;
 			return;
