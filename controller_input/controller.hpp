@@ -54,8 +54,8 @@ private:
 		case  Buttons::Y:  return lastDpadUsed == Buttons::HAT_LEFT || lastDpadUsed == Buttons::HAT_RIGHT; break;
 
 		case  Buttons::B:
-		case  Buttons::X:  return lastDpadUsed == Buttons::HAT_DOWN || lastDpadUsed == Buttons::HAT_LEFT; break;
-		default: return false; break;
+		case  Buttons::X:  return lastDpadUsed == Buttons::HAT_UP || lastDpadUsed == Buttons::HAT_DOWN; break;
+		default: return false;std::cout << "false"; break;
 
 
 

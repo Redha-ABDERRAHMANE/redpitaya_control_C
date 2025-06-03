@@ -40,25 +40,21 @@ public:
 
 
     void get_and_applyPreset(const int& button_value) {
-        std::cout << "entered" << std::endl;
         GnPresets.set_nextPreset(button_value);
-        std::cout << "entered" << std::endl;
+
         nextPreset = GnPresets.get_nextPreset();
-        std::cout << "entered" << std::endl;
+
         currentPreset = GnPresets.get_currentPreset();
-        std::cout << "entered" << std::endl;
 
         for (auto& v : nextPreset)    std::cout << ' ' << v;
         std::cout << "\n";
 
-        std::cout << "entered" << std::endl;
 
         for (auto& v : currentPreset) std::cout << ' ' << v;
         std::cout << "\n";
 
-        std::cout << "entered" << std::endl;
         if (SignalGn.apply_preset_values(nextPreset, currentPreset)) {
-            std::cout << "entered" << std::endl;
+
             GnPresets.update_currentAndPreviousPreset();
             //notifyObserver(button_value);
             std::this_thread::sleep_for(std::chrono::milliseconds(500));

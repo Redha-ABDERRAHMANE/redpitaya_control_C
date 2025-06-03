@@ -106,7 +106,9 @@ public:
 
 		static const p_array& hat_up_preset = dictionary_bumperHatPreset.at(Buttons::HAT_UP);
 		static const p_array& hat_left_preset = dictionary_bumperHatPreset.at(Buttons::HAT_LEFT);
+		
 		bool isUp_or_left = (currentPreset == hat_up_preset) || (currentPreset == hat_left_preset);
+		std::cout << "bool " << isUp_or_left << std::endl;
 
 
 		if (WithInInterval(Buttons::A, button_value, Buttons::Y)) {
