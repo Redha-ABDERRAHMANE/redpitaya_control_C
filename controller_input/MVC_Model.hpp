@@ -17,26 +17,19 @@ private:
     waveGnPresets GnPresets;
     Controller controller;
 
-    int button_value;
+    
     p_array nextPreset;
     p_array currentPreset;
     
 
 public:
-    MVC_Model() : SignalGn(IP_PRIMARY, IP_SECONDARY), controller(), GnPresets() {
+    MVC_Model() : SignalGn(IP_PRIMARY, IP_SECONDARY),GnPresets(),controller() {
         currentPreset = GnPresets.get_currentPreset();
         nextPreset = GnPresets.get_currentPreset();
     }
     ~MVC_Model(){}
 
-    void check_newInput() {
-        while (true) {
-            button_value = controller.CheckControllerEvent();
-            if (button_value == -1) { continue; }
-            get_and_applyPreset(button_value);
-        }
 
-    }
 
 
     void get_and_applyPreset(const int& button_value) {
@@ -56,17 +49,18 @@ public:
         if (SignalGn.apply_preset_values(nextPreset, currentPreset)) {
 
             GnPresets.update_currentAndPreviousPreset();
-            //notifyObserver(button_value);
+            std::pair<const int&, bool> pairToSend = { button_value,Controller::isButton(button_value) ? false : true };
+            notifyObserver(pairToSend);
             std::this_thread::sleep_for(std::chrono::milliseconds(500));
         }
     }
 
-    // true : primary(HAT pressed ), false : secondary(button pressed)
-    void notifyObserver(const int& button_value) {
-        std::pair<const int&, bool> pairToSend = { button_value,Controller::isButton(button_value) ? false : true };
-        Observable::notifyObserver(pairToSend);
+    //// true : primary(HAT pressed ), false : secondary(button pressed)
+    //void notifyController(const int& button_value) {
+    //    std::pair<const int&, bool> pairToSend = { button_value,Controller::isButton(button_value) ? false : true };
+    //    Observable::notifyObserver(pairToSend);
 
-    }
+    //}
 
 
 
