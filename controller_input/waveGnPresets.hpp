@@ -62,13 +62,15 @@ private:
 		  }
 		},
 		{ Buttons::Y, {
+			{ 0.75f,      AMPLITUDE_0, PHASE_140, 0.35f, 0.2f, PHASE_50 },  // left‐Y
 			{ AMPLITUDE_0, 0.35f, PHASE_140, 0.35f, 0.2f, PHASE_50 },   // right‐Y
-			{ 0.75f,      AMPLITUDE_0, PHASE_140, 0.35f, 0.2f, PHASE_50 }  // left‐Y
+			
 		  }
 		},
 		{ Buttons::A, {
+			{ AMPLITUDE_0, 0.35f,      PHASE_0, 0.35f, 0.2f, PHASE_50 },   // left‐A
 			{ 0.75f,      AMPLITUDE_0, PHASE_0, 0.35f, 0.2f, PHASE_50 },  // right‐A
-			{ AMPLITUDE_0, 0.35f,      PHASE_0, 0.35f, 0.2f, PHASE_50 }   // left‐A
+			
 		  }
 		}
 	};
