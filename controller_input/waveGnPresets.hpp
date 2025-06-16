@@ -1,4 +1,4 @@
-#pragma once 
+﻿#pragma once 
 #include<map>
 #include<algorithm>
 #include <utility>
@@ -35,8 +35,38 @@ using p_array = std::array<float, 6>;
 using pair_p_array = std::pair<p_array, p_array>;
 
 private:
-	std::map<int, p_array> dictionary_bumperHatPreset;
-	std::map<int,pair_p_array> dictionary_buttonPreset;
+	std::map<int, p_array> dictionary_bumperHatPreset{
+	  { Buttons::BUMPER_LEFT,  { AMPLITUDE_0,   AMPLITUDE_0,   PHASE_0,   AMPLITUDE_0,   AMPLITUDE_0,   PHASE_0   } },
+	  { Buttons::BUMPER_RIGHT, { 0.4f,          0.2f,          PHASE_0,   0.35f,         0.2f,          PHASE_50 } },
+	  { Buttons::HAT_UP,       { 0.4f,          0.2f,          PHASE_0,   0.5f,          AMPLITUDE_0,   PHASE_50 } },
+	  { Buttons::HAT_DOWN,     { 0.4f,          0.2f,          PHASE_140, 0.5f,          AMPLITUDE_0,   PHASE_50 } },
+	  { Buttons::HAT_RIGHT,    { 0.75f,         AMPLITUDE_0,   PHASE_0,   0.35f,         0.2f,          PHASE_50 } },
+	  { Buttons::HAT_LEFT,     { AMPLITUDE_0,   0.35f,         PHASE_0,   0.35f,         0.2f,          PHASE_50 } }
+	};
+	std::map<int,pair_p_array> dictionary_buttonPreset{
+		{ Buttons::X, {
+			{ 0.4f, 0.2f, PHASE_140, AMPLITUDE_0, 0.35f, PHASE_50 },  // up‐X
+			{ 0.4f, 0.2f, PHASE_0,   AMPLITUDE_0, 0.35f, PHASE_50 }   // down‐X
+		  }
+		},
+		{ Buttons::B, {
+			{ 0.4f, 0.2f, PHASE_0,   0.5f,AMPLITUDE_0, PHASE_50 },  // up‐B
+			{ 0.4f, 0.2f, PHASE_140, 0.5f,AMPLITUDE_0, PHASE_50 }   // down‐B
+		  }
+		},
+		{ Buttons::Y, {
+			{ 0.75f,      AMPLITUDE_0, PHASE_140, 0.35f, 0.2f, PHASE_50 },  // left‐Y
+			{ AMPLITUDE_0, 0.35f, PHASE_140, 0.35f, 0.2f, PHASE_50 }   // right‐Y
+
+		  }
+		},
+		{ Buttons::A, {
+			{ AMPLITUDE_0, 0.35f,      PHASE_0, 0.35f, 0.2f, PHASE_50 },   // left‐A
+			{ 0.75f,      AMPLITUDE_0, PHASE_0, 0.35f, 0.2f, PHASE_50 }  // right‐A
+
+		  }
+		}
+	};
 	p_array currentPreset = {};
 	p_array previousPresetUsed = {};
 
@@ -46,41 +76,6 @@ public:
 
 
 
-
-		dictionary_bumperHatPreset[Buttons::BUMPER_LEFT] = { AMPLITUDE_0, AMPLITUDE_0 ,PHASE_0 ,AMPLITUDE_0 ,AMPLITUDE_0 ,PHASE_0 };
-		dictionary_bumperHatPreset[Buttons::BUMPER_RIGHT] = { AMPLITUDE_MAX,AMPLITUDE_MAX,PHASE_0,AMPLITUDE_MAX,AMPLITUDE_MAX,PHASE_50 };
-
-		dictionary_bumperHatPreset[Buttons::HAT_UP] = { a,a,PHASE_0,c,AMPLITUDE_0,PHASE_50 };
-		dictionary_bumperHatPreset[Buttons::HAT_DOWN] = { a,a,PHASE_140,c,AMPLITUDE_0,PHASE_50 };
-
-		dictionary_bumperHatPreset[Buttons::HAT_LEFT] = { AMPLITUDE_0,d,PHASE_0,b,b,PHASE_50 };
-		dictionary_bumperHatPreset[Buttons::HAT_RIGHT] = { d,AMPLITUDE_0,PHASE_0,b,b,PHASE_50 };
-
-		//TODO 
-		/*
-		Make sure to put a pointer for the shared presets between the two dictionnaries to avoid unnecessary copies
-		*/
-
-		// Button combinations - each button has 2 presets (up/down or left/right variants)
-		dictionary_buttonPreset[Buttons::X] = {
-			{ a,a,PHASE_140,AMPLITUDE_0,c,PHASE_50 },  // preset_hat_up_button_x
-			{ a,a,PHASE_0,AMPLITUDE_0,c,PHASE_50 }     // preset_hat_down_button_x  
-		};
-
-		dictionary_buttonPreset[Buttons::B] = {
-			{ a,a,PHASE_0,c,AMPLITUDE_0,PHASE_50 },    // preset_hat_up_button_b
-			{ a,a,PHASE_140,c,AMPLITUDE_0,PHASE_50 }   // preset_hat_down_button_b
-		};
-
-		dictionary_buttonPreset[Buttons::Y] = {
-			{ d,AMPLITUDE_0,PHASE_140,b,b,PHASE_50 },  // preset_hat_left_button_y
-			{ AMPLITUDE_0,d,PHASE_140,b,b,PHASE_50 }   // preset_hat_right_button_y
-		};
-
-		dictionary_buttonPreset[Buttons::A] = {
-			{ AMPLITUDE_0,d,PHASE_0,b,b,PHASE_50 },    // preset_hat_left_button_a
-			{ d,AMPLITUDE_0,PHASE_0,b,b,PHASE_50 }     // preset_hat_right_button_a
-		};
 
 		currentPreset = get_preset(Buttons::BUMPER_LEFT);
 		previousPresetUsed = currentPreset;
