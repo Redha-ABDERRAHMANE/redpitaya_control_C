@@ -19,6 +19,7 @@ int main() {
     p_array nextPreset;
     p_array currentPreset;
     float a, b, c, d, e, f; // for scanf
+    int userfrequency;
 
     while (true) {
         button_value = j.CheckControllerEvent();
@@ -27,18 +28,26 @@ int main() {
             case Buttons::SELECT: {
                 // custom full‐preset entry
                 std::cout << " custom preset:\n";
-                scanf_s(" %f,%f,%f,%f,%f,%f", &a, &b, &c, &d, &e, &f);
+                scanf_s(" %f,%f,%f,%f,%f,%f", &a, &b, &c, &d, &e, &f); 
                 nextPreset = { a, b, c, d, e, f };
                 currentPreset = p.get_currentPreset();
+                
 
 
+                break;
+            }
+            case Buttons::TRIGGER_LEFT: {
+                std::cout << " custom frequency:\n";
+                do { scanf_s(" %d", &userfrequency); } while (!WithInInterval(0, userfrequency, 100));
+                SignalGn.apply_frequency_values(userfrequency);
+                button_value = -1;
                 break;
             }
 
             case Buttons::START: {
                 // custom phase only
                 std::cout << " custom phase:\n";
-                scanf_s(" %f,%f", &a, &b);
+                do { scanf_s(" %f,%f", &a, &b); } while (!WithInInterval(0, a, 180) or !WithInInterval(0, b, 180));
                 nextPreset = p.get_currentPreset();
                 nextPreset[2] = a;  // primary phase
                 nextPreset[5] = b;  // secondary phase
@@ -56,7 +65,6 @@ int main() {
                 
                 nextPreset = p.get_preset(button_value);
                 currentPreset = p.get_currentPreset();
-
                 break;
             }
         }

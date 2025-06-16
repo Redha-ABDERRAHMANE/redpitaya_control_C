@@ -7,6 +7,7 @@
 #include <ctime>
 #include <cmath>
 #include <vector>
+#include <future>
 #include "RedpitayaCard.hpp"
 
 #define SOURCE_1 1
@@ -26,13 +27,14 @@ private:
 	
 	//waveGnPresets presetFactory;
 	RedpitayaCards rp_boards;
+	int currentFrequency;
 
 
 
 public:
 	
 	RpSignalGn(const char* primaryBoardIP, const char* secondaryBoardIP) :
-		rp_boards(primaryBoardIP, secondaryBoardIP, 5){
+		rp_boards(primaryBoardIP, secondaryBoardIP, 5),currentFrequency(5){
 
 
 
@@ -130,6 +132,28 @@ public:
 	
 	
 	
+	}
+
+	void  apply_frequency_values(const float& nextFrequency) {
+		if (nextFrequency > 1000) return;
+		std::cout << "currentFrequency:" << currentFrequency << std::endl;
+		std::array<std::future<void>, 4> threadArray = {
+
+
+
+		std::async(std::launch::async,&RpSignalGn::detect_ramp_up_or_down,this, PRIMARY_BOARD, nextFrequency, currentFrequency, SOURCE_1, "FREQ:FIX:Direct "),
+		std::async(std::launch::async,&RpSignalGn::detect_ramp_up_or_down,this, PRIMARY_BOARD, nextFrequency, currentFrequency, SOURCE_2, "FREQ:FIX:Direct "),
+		std::async(std::launch::async,&RpSignalGn::detect_ramp_up_or_down,this, SECONDARY_BOARD, nextFrequency, currentFrequency, SOURCE_1, "FREQ:FIX:Direct "),
+		std::async(std::launch::async,&RpSignalGn::detect_ramp_up_or_down,this, SECONDARY_BOARD, nextFrequency, currentFrequency, SOURCE_2, "FREQ:FIX:Direct ")
+
+
+		};
+
+		for (std::future<void>& thread : threadArray) { thread.get(); }
+
+		currentFrequency = nextFrequency;
+
+
 	}
 
 

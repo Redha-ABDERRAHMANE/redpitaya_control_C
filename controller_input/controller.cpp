@@ -14,7 +14,7 @@ std::map<int, std::string> ButtonsMap{
 
 bool Controller::validControllerButton(const int& button_value) {
 	return WithInInterval(Buttons::A, button_value, Buttons::BUMPER_LEFT) or WithInInterval(Buttons::HAT_UP, button_value, Buttons::HAT_RIGHT)
-		or button_value==Buttons::SELECT or button_value==Buttons::START;
+		or button_value==Buttons::SELECT or button_value==Buttons::START or button_value== Buttons::TRIGGER_LEFT;
 }
 
 int Controller::buttonOrHat(const int& button_value) {
