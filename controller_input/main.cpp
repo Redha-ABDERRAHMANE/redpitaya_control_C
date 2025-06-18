@@ -85,6 +85,6 @@ int main() {
         }
 
         
-        
+        std::cin.ignore(1000, '\n');
     }
 }
