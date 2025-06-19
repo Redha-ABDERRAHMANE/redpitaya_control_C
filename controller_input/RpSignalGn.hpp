@@ -22,9 +22,9 @@
 
 class RpSignalGn
 {
-	using p_array = std::array<float,6>;
+	using p_array = std::array<float, 6>;
 private:
-	
+
 	//waveGnPresets presetFactory;
 	RedpitayaCards rp_boards;
 	int currentFrequency;
@@ -32,9 +32,9 @@ private:
 
 
 public:
-	
+
 	RpSignalGn(const char* primaryBoardIP, const char* secondaryBoardIP) :
-		rp_boards(primaryBoardIP, secondaryBoardIP, 5),currentFrequency(5){
+		rp_boards(primaryBoardIP, secondaryBoardIP, 5), currentFrequency(5) {
 
 
 
@@ -64,16 +64,18 @@ public:
 		if (V_P == "PHAS") {
 			current_value = (int)current_value;
 			target_value = (int)target_value;
+			rp_boards.send_txt(card, command + std::to_string(target_value));
+			return;
 		}
 
 
-		
+
 		for (volatile int i = 0; i < STEPS; i++) {
-			
+
 			new_value += step_size;
 
 			rp_boards.send_txt(card, command + std::to_string(new_value));
-	
+
 			std::this_thread::sleep_for(std::chrono::milliseconds(300));
 		}
 
@@ -81,43 +83,44 @@ public:
 		rp_boards.send_txt(card, command + std::to_string(target_value));
 	}
 
-	void detect_ramp_up_or_down(const int& card, const float& target_value, const float& current_value,const int& source, const std::string& V_P = "VOLT"){
-		if (target_value != current_value){
+	void detect_ramp_up_or_down(const int& card, const float& target_value, const float& current_value, const int& source, const std::string& V_P = "VOLT") {
+		if (target_value != current_value) {
 			ramp_up_and_down(card, source, current_value, target_value, V_P);
 		}
 
 	}
 	//TODO COMPLETE THIS METHOD
-	bool apply_preset_values(p_array& nextPreset, const p_array& currentPreset){
+	bool apply_preset_values(p_array& nextPreset, const p_array& currentPreset) {
 		if (nextPreset == currentPreset) {
 			std::cout << "same preset:" << std::endl;
 			std::cout << "preset:" << std::endl;
-			for (auto& x : nextPreset){
+			for (auto& x : nextPreset) {
 				std::cout << x << " ";
 			}
-		
+
 
 
 			std::cout << "\n previous preset:" << std::endl;
 			for (auto& x : currentPreset) {
 				std::cout << x << " ";
 			}
-			std::cout<<std::endl;
+			std::cout << std::endl;
 
-			return false; }
+			return false;
+		}
 
 		std::vector<std::thread> threadVector;
 		threadVector.reserve(8);
 
-		threadVector.emplace_back(&RpSignalGn::detect_ramp_up_or_down,this, PRIMARY_BOARD, nextPreset[2], currentPreset[2], SOURCE_1, "PHAS");
-		threadVector.emplace_back(&RpSignalGn::detect_ramp_up_or_down,this, PRIMARY_BOARD, nextPreset[2], currentPreset[2], SOURCE_2, "PHAS");
-		threadVector.emplace_back(&RpSignalGn::detect_ramp_up_or_down,this, SECONDARY_BOARD, nextPreset[5], currentPreset[5], SOURCE_1, "PHAS");
-		threadVector.emplace_back(&RpSignalGn::detect_ramp_up_or_down,this, SECONDARY_BOARD, nextPreset[5], currentPreset[5], SOURCE_2, "PHAS");
+		threadVector.emplace_back(&RpSignalGn::detect_ramp_up_or_down, this, PRIMARY_BOARD, nextPreset[2], currentPreset[2], SOURCE_1, "PHAS");
+		threadVector.emplace_back(&RpSignalGn::detect_ramp_up_or_down, this, PRIMARY_BOARD, nextPreset[2], currentPreset[2], SOURCE_2, "PHAS");
+		threadVector.emplace_back(&RpSignalGn::detect_ramp_up_or_down, this, SECONDARY_BOARD, nextPreset[5], currentPreset[5], SOURCE_1, "PHAS");
+		threadVector.emplace_back(&RpSignalGn::detect_ramp_up_or_down, this, SECONDARY_BOARD, nextPreset[5], currentPreset[5], SOURCE_2, "PHAS");
 
-		threadVector.emplace_back(&RpSignalGn::detect_ramp_up_or_down,this, PRIMARY_BOARD, nextPreset[0], currentPreset[0], SOURCE_1, "VOLT");
-		threadVector.emplace_back(&RpSignalGn::detect_ramp_up_or_down,this, PRIMARY_BOARD, nextPreset[1], currentPreset[1], SOURCE_2, "VOLT");
-		threadVector.emplace_back(&RpSignalGn::detect_ramp_up_or_down,this, SECONDARY_BOARD, nextPreset[3], currentPreset[3], SOURCE_1, "VOLT");
-		threadVector.emplace_back(&RpSignalGn::detect_ramp_up_or_down,this, SECONDARY_BOARD, nextPreset[4], currentPreset[4], SOURCE_2, "VOLT");
+		threadVector.emplace_back(&RpSignalGn::detect_ramp_up_or_down, this, PRIMARY_BOARD, nextPreset[0], currentPreset[0], SOURCE_1, "VOLT");
+		threadVector.emplace_back(&RpSignalGn::detect_ramp_up_or_down, this, PRIMARY_BOARD, nextPreset[1], currentPreset[1], SOURCE_2, "VOLT");
+		threadVector.emplace_back(&RpSignalGn::detect_ramp_up_or_down, this, SECONDARY_BOARD, nextPreset[3], currentPreset[3], SOURCE_1, "VOLT");
+		threadVector.emplace_back(&RpSignalGn::detect_ramp_up_or_down, this, SECONDARY_BOARD, nextPreset[4], currentPreset[4], SOURCE_2, "VOLT");
 
 
 		for (std::thread& t : threadVector) { t.join(); }
@@ -129,9 +132,9 @@ public:
 		//
 
 
-	
-	
-	
+
+
+
 	}
 
 	void  apply_frequency_values(const float& nextFrequency) {
@@ -155,6 +158,8 @@ public:
 
 
 	}
+
+
 
 
 		
