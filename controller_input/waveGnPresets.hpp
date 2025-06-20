@@ -40,31 +40,31 @@ private:
 	std::map<int, p_array> dictionary_bumperHatPreset{
 		{ Buttons::BUMPER_LEFT,  { AMPLITUDE_0,	AMPLITUDE_0	,   PHASE_0,	AMPLITUDE_0	,   AMPLITUDE_0,   PHASE_0   } },
 		{ Buttons::BUMPER_RIGHT, { 0.11f,			0.11f	,	PHASE_0,	0.15f		,         0.15f,          PHASE_0 } },
-		{ Buttons::HAT_UP,       { 0.11f,			0.11f	,          85,   0.285f,          AMPLITUDE_0,   PHASE_0} },
-		{ Buttons::HAT_DOWN,     { 0.11f,			0.11f	,         85	, AMPLITUDE_0,          0.32f,   PHASE_0 } },
-		{ Buttons::HAT_RIGHT,    { 0.22f,		AMPLITUDE_0	,			85,   0.15f,         0.15f,          175 } },
-		{ Buttons::HAT_LEFT,     {AMPLITUDE_0,   0.21f,         85,   0.15f,         0.15f,          175 } }
+		{ Buttons::HAT_UP,       { 0.11f,			0.11f	,          85.0f,   0.285f,          AMPLITUDE_0,   PHASE_0} },
+		{ Buttons::HAT_DOWN,     { 0.11f,			0.11f	,         85.0f	, AMPLITUDE_0,          0.32f,   PHASE_0 } },
+		{ Buttons::HAT_RIGHT,    { 0.22f,		AMPLITUDE_0	,			85.0f,   0.15f,         0.15f,          175.0f } },
+		{ Buttons::HAT_LEFT,     {AMPLITUDE_0,   0.21f,         85.0f,   0.15f,         0.15f,          175.0f } }
 	};
 	std::map<int,pair_p_array> dictionary_buttonPreset{
 		{ Buttons::X, {
-			{ 0.11f, 0.11f, 85,0.285f, AMPLITUDE_0, 175 },  // up‐X
-			{ 0.11f, 0.11f, 85,   AMPLITUDE_0, 0.32f, 175 }   // down‐X
+			{ 0.11f, 0.11f, 85.0f,0.285f, AMPLITUDE_0, 175.0f },  // up‐X
+			{ 0.11f, 0.11f, 85.0f,   AMPLITUDE_0, 0.32f, 175.0f }   // down‐X
 		  }
 		},
 		{ Buttons::B, {
-			{ 0.11f,0.11f,  85, 0.285f, AMPLITUDE_0,PHASE_0},  // up‐B
-			{ 0.11f,0.11f	, 85, AMPLITUDE_0,0.32f,PHASE_0 }   // down‐B
+			{ 0.11f,0.11f,  85.0f, 0.285f, AMPLITUDE_0,PHASE_0},  // up‐B
+			{ 0.11f,0.11f	, 85.0f, AMPLITUDE_0,0.32f,PHASE_0 }   // down‐B
 		  }
 		},
 		{ Buttons::Y, {
-			{ 0.22f, AMPLITUDE_0, 85,0.15f, 0.15f, PHASE_0 },  // left‐Y
-			{ AMPLITUDE_0, 0.21f, 85,   0.15f, 0.15f, PHASE_0 }   // right‐Y
+			{ 0.22f, AMPLITUDE_0, 85.0f,0.15f, 0.15f, PHASE_0 },  // left‐Y
+			{ AMPLITUDE_0, 0.21f, 85.0f,   0.15f, 0.15f, PHASE_0 }   // right‐Y
 
 		  }
 		},
 		{ Buttons::A, {
-			{ AMPLITUDE_0,0.21f	,85, 0.15f,  0.15f, 175 }, // left-A
-			{0.22f,  AMPLITUDE_0,  85, 0.15f, 0.15f, 175 },   // right‐A
+			{ AMPLITUDE_0,0.21f	,85.0f, 0.15f,  0.15f, 175.0f }, // left-A
+			{0.22f,  AMPLITUDE_0,  85.0f, 0.15f, 0.15f, 175.0f },   // right‐A
 
 
 		  }
