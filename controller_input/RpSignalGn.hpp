@@ -62,7 +62,8 @@ public:
 		float new_value = current_value;
 
 		if (V_P == "PHAS") {
-			std::cout << "Target value   : " << target_value << std::endl;
+			//std::cout << "Target value   : " << target_value << std::endl;
+			std::cout << command + std::to_string(target_value) << std::endl;
 			rp_boards.send_txt(card, command + std::to_string(target_value));
 			return;
 		}
@@ -83,9 +84,9 @@ public:
 	}
 
 	void detect_ramp_up_or_down(const int& card, const float& target_value, const float& current_value, const int& source, const std::string& V_P = "VOLT") {
-		//if (target_value != current_value) {
+		if (target_value != current_value) {
 			ramp_up_and_down(card, source, current_value, target_value, V_P);
-		//}
+		}
 
 	}
 	//TODO COMPLETE THIS METHOD

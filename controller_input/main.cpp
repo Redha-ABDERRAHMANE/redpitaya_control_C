@@ -38,7 +38,7 @@ int main() {
             }
             case Buttons::TRIGGER_LEFT: {
                 std::cout << " custom frequency:\n";
-                do { scanf_s(" %d", &userfrequency); } while (!WithInInterval(0, userfrequency, 100));
+                do { scanf_s(" %d", &userfrequency); } while (!WithInInterval(0, userfrequency, 1000));
                 SignalGn.apply_frequency_values(userfrequency);
                 button_value = -1;
                 break;
