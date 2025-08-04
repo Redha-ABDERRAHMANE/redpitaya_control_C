@@ -1,24 +1,10 @@
 ﻿#pragma once 
 #include<map>
-#include<algorithm>
 #include <utility>
 #include <array>
 #include "controller.hpp"
-
-#define AMPLITUDE_0 0.0f
-#define AMPLITUDE_MAX 1.0f
-
-#define FREQUENCY_0 0
-#define FREQUENCY_MAX 1000
-
-
-
-#define PHASE_0		0
-#define PHASE_50	50
-#define PHASE_90	90
-#define PHASE_140	140
-#define PHASE_180	180
-
+#include "commonValues.h"
+#include "signalPresetValues.hpp"
 
 
 //#define SOURCE_1 1
@@ -29,120 +15,107 @@
 #define check_Equals(val, x, y) ((val) == (x) || (val) == (y))
 
 
+
 class waveGnPresets
 {
-using p_array = std::array<float, 6>;
-using pair_p_array = std::pair<p_array, p_array>;
+
 
 private:
-	
-	/////////////////////////
-	std::map<int, p_array> dictionary_bumperHatPreset{
-		{ Buttons::BUMPER_LEFT,  { AMPLITUDE_0,	AMPLITUDE_0	,   PHASE_0,	AMPLITUDE_0	,   AMPLITUDE_0,   PHASE_0   } },
-		{ Buttons::BUMPER_RIGHT, { 0.11f,			0.11f	,	PHASE_0,	0.15f		,         0.15f,          PHASE_0 } },
-		{ Buttons::HAT_UP,       { 0.11f,			0.11f	,          85.0f,   0.285f,          AMPLITUDE_0,   PHASE_0} },
-		{ Buttons::HAT_DOWN,     { 0.11f,			0.11f	,         85.0f	, AMPLITUDE_0,          0.32f,   PHASE_0 } },
-		{ Buttons::HAT_RIGHT,    { 0.22f,		AMPLITUDE_0	,			85.0f,   0.15f,         0.15f,          175.0f } },
-		{ Buttons::HAT_LEFT,     {AMPLITUDE_0,   0.21f,         85.0f,   0.15f,         0.15f,          175.0f } }
-	};
-	std::map<int,pair_p_array> dictionary_buttonPreset{
-		{ Buttons::X, {
-			{ 0.11f, 0.11f, 85.0f,   AMPLITUDE_0, 0.32f, 175.0f } ,  // up‐X{ 0.11f, 0.11f, 85.0f,   AMPLITUDE_0, 0.32f, 175.0f } 
-			{ 0.11f, 0.11f, 85.0f,0.285f, AMPLITUDE_0, 175.0f }   // down‐X
-		  }
-		},
-		{ Buttons::B, {
-			{ 0.11f,0.11f,  85.0f, 0.285f, AMPLITUDE_0,PHASE_0},  // up‐B
-			{ 0.11f,0.11f	, 85.0f, AMPLITUDE_0,0.32f,PHASE_0 }   // down‐B
-		  }
-		},
-		{ Buttons::Y, {
-			{ 0.22f, AMPLITUDE_0, 85.0f,0.15f, 0.15f, PHASE_0 },  // left‐Y
-			{ AMPLITUDE_0, 0.21f, 85.0f,   0.15f, 0.15f, PHASE_0 }   // right‐Y
 
-		  }
-		},
-		{ Buttons::A, {
-			{ AMPLITUDE_0,0.21f	,85.0f, 0.15f,  0.15f, 175.0f }, // left-A
-			{0.22f,  AMPLITUDE_0,  85.0f, 0.15f, 0.15f, 175.0f },   // right‐A
+	std::map<int, preset_array_t>* dictionary_bumperHatPreset = &dictionary_bumperHatPreset_XY;
+	std::map<int, pair_p_array_t>* dictionary_buttonPreset = &dictionary_buttonPreset_XY;
+	preset_array_t currentPreset = dictionary_bumperHatPreset_XY.at(Buttons::BUMPER_LEFT);
+	preset_array_t previousPresetUsed = dictionary_bumperHatPreset_XY.at(Buttons::BUMPER_LEFT);
+	preset_array_t nextPreset = {};
 
-
-		  }
-		}
-	};
-	p_array currentPreset = {};
-	p_array previousPresetUsed = {};
+	int dimension = Dimensions::XY;
 
 public:
-	waveGnPresets(const float& a=1.0f, const float& b=1.0f, const float& c = 1.0f, const float& d = 1.0f){
+	waveGnPresets() {}
 
-
-
-
-
-		currentPreset = get_preset(Buttons::BUMPER_LEFT);
-		previousPresetUsed = currentPreset;
-	}
-
-	const p_array& get_currentPreset()const {
+	const preset_array_t& GetCurrentPreset()const {
 		return currentPreset;
 	}
-	const p_array& get_previousPresetUsed()const {
+	const preset_array_t& GetPreviousPresetUsed()const {
 		return previousPresetUsed;
 	}
-	void set_previousPresetUsed(const p_array preset) {
+	const preset_array_t& GetNextPreset()const {
+		return nextPreset;
+	}
+	void SetPreviousPresetUsed(const preset_array_t preset) {
 		previousPresetUsed = preset;
 	}
 
-	void set_currentPreset(const int& button_value) {
-		currentPreset = get_preset(button_value);
+	void SetDimension(const int button_value, const bool GUI_button = false) {
+		if (GUI_button) {
+			dimension = button_value;
+		}
+		else {
+			switch (button_value) {
+			case Buttons::TRIGGER_LEFT:
+				dimension = ((dimension - 1) % Dimensions::DIMENSIONSIZE) < 0 ? Dimensions::DIMENSIONSIZE - 1 : (dimension - 1);
+				break;
+
+			case Buttons::TRIGGER_RIGHT:
+				dimension = (dimension + 1) % Dimensions::DIMENSIONSIZE;
+				break;
+			}
+		}
+		std::cout << "DIMENSION SET TO : " << dimension << std::endl;
+		dictionary_bumperHatPreset = &arrayDimensionDictionnaries.at(dimension).first;
+		dictionary_buttonPreset = &arrayDimensionDictionnaries.at(dimension).second;
+
+
+
 	}
-	void set_currentPreset(const p_array preset) {
+
+	//  USED BY MVC_Controller  TO SET  GUI USER INPUT INSTRUCTIONS
+	void SetCurrentPreset(const int& button_value) {
+		currentPreset = dictionary_bumperHatPreset->at(button_value);
+	}
+	////////////////////////////////////////////////////////
+	void SetCurrentPreset(const preset_array_t preset) {
 		currentPreset = preset;
 	}
 
+	//Second parameter for GUI use only
+	void SetNextPreset(const int& button_value, const int& GUI_hat_button = -1) {
+		static int lastUsedDimension = dimension;
+		static preset_array_t hat_up_preset = dictionary_bumperHatPreset->at(Buttons::HAT_UP);
+		static preset_array_t hat_left_preset = dictionary_bumperHatPreset->at(Buttons::HAT_LEFT);
 
-
-
-
-
-	const p_array& get_preset(const int& button_value){
-
-		if (Controller::isButton(button_value) && check_lastPresetCoherence(button_value)==-1) { return currentPreset; }
-
-		static const p_array& hat_up_preset = dictionary_bumperHatPreset.at(Buttons::HAT_UP);
-		static const p_array& hat_left_preset = dictionary_bumperHatPreset.at(Buttons::HAT_LEFT);
-		bool isUp_or_left = (currentPreset == hat_up_preset) || (currentPreset == hat_left_preset);
-
-
-		if (WithInInterval(Buttons::A, button_value, Buttons::Y)) {
-			const std::pair<p_array, p_array>& preset_pair = dictionary_buttonPreset.at(button_value);
-			return isUp_or_left ? preset_pair.first : preset_pair.second;
+		if (lastUsedDimension != dimension) {
+			hat_up_preset = dictionary_bumperHatPreset->at(Buttons::HAT_UP);
+			hat_left_preset = dictionary_bumperHatPreset->at(Buttons::HAT_LEFT);
+			lastUsedDimension = dimension;
 
 		}
-		return dictionary_bumperHatPreset.at(button_value);
+
+
+
+		if (Controller::IsButton(button_value)) {
+			bool isUp_or_left;
+			if (GUI_hat_button != -1) {
+				preset_array_t& hatPreset = dictionary_bumperHatPreset->at(GUI_hat_button);
+				isUp_or_left = (hatPreset == hat_up_preset) || (hatPreset == hat_left_preset);
+			}
+			else {
+				isUp_or_left = (currentPreset == hat_up_preset) || (currentPreset == hat_left_preset);
+			}
+			const std::pair<preset_array_t, preset_array_t>& preset_pair = dictionary_buttonPreset->at(button_value);
+			nextPreset = isUp_or_left ? preset_pair.first : preset_pair.second;
+			return;
+
+		}
+		nextPreset = dictionary_bumperHatPreset->at(button_value);
 
 	}
 
-	int check_lastPresetCoherence(const int& button_value) const {
-		static const p_array& hat_up_preset = dictionary_bumperHatPreset.at(Buttons::HAT_UP);
-		static const p_array& hat_down_preset = dictionary_bumperHatPreset.at(Buttons::HAT_DOWN);
-		static const p_array& hat_left_preset = dictionary_bumperHatPreset.at(Buttons::HAT_LEFT);
-		static const p_array& hat_right_preset = dictionary_bumperHatPreset.at(Buttons::HAT_RIGHT);
 
 
-		if (currentPreset == hat_up_preset || currentPreset == hat_down_preset || previousPresetUsed == hat_up_preset || previousPresetUsed == hat_down_preset) {
-			return check_Equals(button_value, Buttons::B, Buttons::X);
-		}
-		if (currentPreset== hat_left_preset || currentPreset== hat_right_preset || previousPresetUsed == hat_left_preset || previousPresetUsed == hat_right_preset) {
-			return check_Equals(button_value, Buttons::A, Buttons::Y);
-		}
-		return -1;
-	}
-
-	void update_currentAndPreviousPreset(const p_array& currentPreset, const p_array& nextPreset) {
-		set_previousPresetUsed(currentPreset);
-		set_currentPreset(nextPreset);
+	void UpdateCurrentAndPreviousPreset() {
+		SetPreviousPresetUsed(currentPreset);
+		SetCurrentPreset(nextPreset);
 	}
 
 
