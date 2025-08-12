@@ -11,11 +11,11 @@ int main() {
     typedef std::pair<preset_array_t, preset_array_t> pair_p_array_t;
     typedef std::pair<std::map<int, preset_array_t>&, std::map<int, pair_p_array_t>&> pair_dimension_dictionnary_t;
 
-    const char* IP_PRIMARY = "127.0.0.1"; // Master board
+    const char* IP_PRIMARY = "169.254.112.159"; // Master board
     const char* IP_SECONDARY = "169.254.9.76";     // Slave board
     
     Controller j;
-    std::array<const char*, SLAVE_BOARDS> arraySlaveBoardIPs = { "127.0.0.1", "127.0.0.1" };
+    std::array<const char*, SLAVE_BOARDS> arraySlaveBoardIPs = { "169.254.9.76", "169.254.139.169" };
     RpSignalGn signalGn(IP_PRIMARY, arraySlaveBoardIPs);
     waveGnPresets p;
 

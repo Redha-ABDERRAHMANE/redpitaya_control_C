@@ -73,15 +73,11 @@ private:
 
 	int CheckValidControllerButtonAndCoherence(const int& button_value) {
 		std::cout << "button used" << button_value << std::endl;
-		if (button_value == Buttons::SELECT || button_value == Buttons::START) return button_value;
+		if (button_value == Buttons::SELECT||button_value == Buttons::START||button_value == Buttons::JOYSTICKPRESS) return button_value;
 		if (IsBumper(button_value)) {
 			std::cout << "BUMPER PRESSED" << std::endl;
 			lastDpadUsed = Buttons::INVALID_BUTTON;
 			return button_value;
-		}
-		if (button_value == Buttons::SELECT) {
-			blockTrigger = not blockTrigger;
-			return Buttons::INVALID_BUTTON;
 		}
 		if (isHat(button_value)) {
 			if (button_value != lastDpadUsed) {

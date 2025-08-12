@@ -46,76 +46,67 @@ inline std::map<int, pair_p_array_t> dictionary_buttonPreset_XY{
 
 
 inline std::map<int, preset_array_t> dictionary_bumperHatPreset_XZ{
-{ Buttons::BUMPER_LEFT,  preset_array_t{ -20.0f, -20.0f, -20.0f, -20.0f, -20.0f, -20.0f, -20.0f, -20.0f, -20.0f } },
-{ Buttons::BUMPER_RIGHT, preset_array_t{ -19.0f, -19.0f, -19.0f, -19.0f, -19.0f, -19.0f, -19.0f, -19.0f, -19.0f } },
-{ Buttons::HAT_UP,       preset_array_t{ -18.0f, -18.0f, -18.0f, -18.0f, -18.0f, -18.0f, -18.0f, -18.0f, -18.0f} },
-{ Buttons::HAT_DOWN,     preset_array_t{ -17.0f, -17.0f, -17.0f, -17.0f, -17.0f, -17.0f, -17.0f, -17.0f, -17.0f } },
-{ Buttons::HAT_RIGHT,    preset_array_t{ -16.0f, -16.0f, -16.0f, -16.0f, -16.0f, -16.0f, -16.0f, -16.0f, -16.0f } },
-{ Buttons::HAT_LEFT,     preset_array_t{ -15.0f, -15.0f, -15.0f, -15.0f, -15.0f, -15.0f, -15.0f, -15.0f, -15.0f } }
+{ Buttons::BUMPER_LEFT,  preset_array_t{ 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f } },
+{ Buttons::BUMPER_RIGHT, preset_array_t{ 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f } },
+{ Buttons::HAT_UP,       preset_array_t{ 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f} },
+{ Buttons::HAT_DOWN,     preset_array_t{ 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f } },
+{ Buttons::HAT_RIGHT,    preset_array_t{ 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f } },
+{ Buttons::HAT_LEFT,     preset_array_t{ 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f } }
 };
 // Button combinations - each button has 2 presets (up/down or left/right variants)
 inline std::map<int, pair_p_array_t> dictionary_buttonPreset_XZ{
 	{ Buttons::X, {
-		{ -14.0f, -14.0f, -14.0f, -14.0f, -14.0f, -14.0f, -14.0f, -14.0f, -14.0f } ,
-		{ -13.0f, -13.0f, -13.0f, -13.0f, -13.0f, -13.0f, -13.0f, -13.0f, -13.0f }
+		{ 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f } ,
+		{ 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f }
 	  }
 	},
 	{ Buttons::B, {
-		{ -12.0f, -12.0f, -12.0f, -12.0f, -12.0f, -12.0f, -12.0f, -12.0f, -12.0f},
-		{ -11.0f, -11.0f, -11.0f, -11.0f, -11.0f, -11.0f, -11.0f, -11.0f, -11.0f }
+		{ 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f},
+		{ 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f }
 	  }
 	},
 	{ Buttons::Y, {
-		{ -10.0f, -10.0f, -10.0f, -10.0f, -10.0f, -10.0f, -10.0f, -10.0f, -10.0f},
-		{ -9.0f, -9.0f, -9.0f, -9.0f, -9.0f, -9.0f, -9.0f, -9.0f, -9.0f}
-
+		{ 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f},
+		{ 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f}
 	  }
 	},
 	{ Buttons::A, {
-		{ -8.0f, -8.0f, -8.0f, -8.0f, -8.0f, -8.0f, -8.0f, -8.0f, -8.0f},
-		{ -7.0f, -7.0f, -7.0f, -7.0f, -7.0f, -7.0f, -7.0f, -7.0f, -7.0f}
-
-
+		{ 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f},
+		{ 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f}
 	  }
 	}
 };
-
-
 inline std::map<int, preset_array_t> dictionary_bumperHatPreset_YZ{
-{ Buttons::BUMPER_LEFT,  preset_array_t{ -6.0f, -6.0f, -6.0f, -6.0f, -6.0f, -6.0f, -6.0f, -6.0f, -6.0f } },
-{ Buttons::BUMPER_RIGHT, preset_array_t{ -5.0f, -5.0f, -5.0f, -5.0f, -5.0f, -5.0f, -5.0f, -5.0f, -5.0f } },
-{ Buttons::HAT_UP,       preset_array_t{ -4.0f, -4.0f, -4.0f, -4.0f, -4.0f, -4.0f, -4.0f, -4.0f, -4.0f } },
-{ Buttons::HAT_DOWN,     preset_array_t{ -3.0f, -3.0f, -3.0f, -3.0f, -3.0f, -3.0f, -3.0f, -3.0f, -3.0f } },
-{ Buttons::HAT_RIGHT,    preset_array_t{ -2.0f, -2.0f, -2.0f, -2.0f, -2.0f, -2.0f, -2.0f, -2.0f, -2.0f } },
-{ Buttons::HAT_LEFT,     preset_array_t{ -1.0f, -1.0f, -1.0f, -1.0f, -1.0f, -1.0f, -1.0f, -1.0f, -1.0f } }
+{ Buttons::BUMPER_LEFT,  preset_array_t{ 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f } },
+{ Buttons::BUMPER_RIGHT, preset_array_t{ 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f } },
+{ Buttons::HAT_UP,       preset_array_t{ 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f } },
+{ Buttons::HAT_DOWN,     preset_array_t{ 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f } },
+{ Buttons::HAT_RIGHT,    preset_array_t{ 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f } },
+{ Buttons::HAT_LEFT,     preset_array_t{ 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f } }
 };
 // Button combinations - each button has 2 presets (up/down or left/right variants)
 inline std::map<int, pair_p_array_t> dictionary_buttonPreset_YZ{
 	{ Buttons::X, {
 		{ 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f } ,
-		{ 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f }
+		{ 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f }
 	  }
 	},
 	{ Buttons::B, {
-		{ 2.0f, 2.0f, 2.0f, 2.0f, 2.0f, 2.0f, 2.0f, 2.0f, 2.0f},
-		{ 3.0f, 3.0f, 3.0f, 3.0f, 3.0f, 3.0f, 3.0f, 3.0f, 3.0f }
+		{ 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f},
+		{ 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f }
 	  }
 	},
 	{ Buttons::Y, {
-		{ 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f},
-		{ 5.0f, 5.0f, 5.0f, 5.0f, 5.0f, 5.0f, 5.0f, 5.0f, 5.0f}
-
+		{ 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f},
+		{ 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f}
 	  }
 	},
 	{ Buttons::A, {
-		{ 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f},
-		{ 7.0f, 7.0f, 7.0f, 7.0f, 7.0f, 7.0f, 7.0f, 7.0f, 7.0f}
-
-
+		{ 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f},
+		{ 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f}
 	  }
 	}
 };
-
 inline std::array< pair_dimension_dictionnary_t, Dimensions::DIMENSIONSIZE> arrayDimensionDictionnaries = {
 	pair_dimension_dictionnary_t{dictionary_bumperHatPreset_XY,dictionary_buttonPreset_XY},
 	pair_dimension_dictionnary_t{dictionary_bumperHatPreset_XZ,dictionary_buttonPreset_XZ},
