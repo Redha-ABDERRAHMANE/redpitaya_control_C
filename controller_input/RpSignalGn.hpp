@@ -145,12 +145,12 @@ public:
 
 
 
-        std::async(std::launch::async,&RpSignalGn::DetectRampUpOrDown,this, PRIMARY_BOARD, nextFrequency, currentFrequency, SOURCE_1, "FREQ:FIX:Direct "),
-        std::async(std::launch::async,&RpSignalGn::DetectRampUpOrDown,this, PRIMARY_BOARD, nextFrequency, currentFrequency, SOURCE_2, "FREQ:FIX:Direct "),
-        std::async(std::launch::async,&RpSignalGn::DetectRampUpOrDown,this, SECONDARY_BOARD, nextFrequency, currentFrequency, SOURCE_1, "FREQ:FIX:Direct "),
-        std::async(std::launch::async,&RpSignalGn::DetectRampUpOrDown,this, SECONDARY_BOARD, nextFrequency, currentFrequency, SOURCE_2, "FREQ:FIX:Direct "),
-        std::async(std::launch::async,&RpSignalGn::DetectRampUpOrDown,this, TERTIARY_BOARD, nextFrequency, currentFrequency, SOURCE_1, "FREQ:FIX:Direct "),
-        std::async(std::launch::async,&RpSignalGn::DetectRampUpOrDown,this, TERTIARY_BOARD, nextFrequency, currentFrequency, SOURCE_2, "FREQ:FIX:Direct ")
+        std::async(std::launch::async,&RpSignalGn::DetectRampUpOrDown,this, PRIMARY_BOARD, nextFrequency, currentFrequency, SOURCE_1, "FREQ:FIX"),
+        std::async(std::launch::async,&RpSignalGn::DetectRampUpOrDown,this, PRIMARY_BOARD, nextFrequency, currentFrequency, SOURCE_2, "FREQ:FIX"),
+        std::async(std::launch::async,&RpSignalGn::DetectRampUpOrDown,this, SECONDARY_BOARD, nextFrequency, currentFrequency, SOURCE_1, "FREQ:FIX"),
+        std::async(std::launch::async,&RpSignalGn::DetectRampUpOrDown,this, SECONDARY_BOARD, nextFrequency, currentFrequency, SOURCE_2, "FREQ:FIX"),
+        std::async(std::launch::async,&RpSignalGn::DetectRampUpOrDown,this, TERTIARY_BOARD, nextFrequency, currentFrequency, SOURCE_1, "FREQ:FIX"),
+        std::async(std::launch::async,&RpSignalGn::DetectRampUpOrDown,this, TERTIARY_BOARD, nextFrequency, currentFrequency, SOURCE_2, "FREQ:FIX")
 
 
         };
