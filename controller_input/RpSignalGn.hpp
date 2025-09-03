@@ -1,16 +1,12 @@
 #pragma once
-#include "waveGnPresets.hpp"
-#include "scpi.hpp"
+//#include "waveGnPresets.hpp"
 #include <array>
 #include <thread>
 #include <chrono>
 #include <ctime>
-#include <cmath>
-#include <vector>
 #include "RedpitayaCard.hpp"
-
-#define SOURCE_1 1
-#define SOURCE_2 2
+#include <future>
+#include "commonValues.h"
 
 #define DELAY 0.3f
 #define STEPS 20
@@ -19,119 +15,172 @@
 
 #define check_ValueBounds(value,x,y) ((x)<=(value) && (value)<=(y))
 
+
+//STRUCT TO USE FOR apply_preset_value method
+struct TaskConfig {
+    const int board;
+    const int presetValueIndex;
+    const int source;
+    const char* param;
+};
+
+
+
+
 class RpSignalGn
 {
-	using p_array = std::array<float,6>;
+    typedef std::array<float, 9> preset_array_t;
+    typedef std::pair<preset_array_t, preset_array_t> pair_p_array_t;
 private:
-	
-	//waveGnPresets presetFactory;
-	RedpitayaCards rp_boards;
+
+    //waveGnPresets presetFactory;
+
+    RedpitayaCards rpBoards;
+    int currentFrequency = 5;
+    std::array<TaskConfig, 12> taskConfigs = { {
+        {PRIMARY_BOARD  ,   PRIMARY_BOARD_COMMON_PHASE_INDEX    ,  SOURCE_1, "PHAS"},
+        {PRIMARY_BOARD  ,   PRIMARY_BOARD_COMMON_PHASE_INDEX    ,  SOURCE_2, "PHAS"},
+        {SECONDARY_BOARD,   SECONDARY_BOARD_COMMON_PHASE_INDEX  ,  SOURCE_1, "PHAS"},
+        {SECONDARY_BOARD,   SECONDARY_BOARD_COMMON_PHASE_INDEX  ,  SOURCE_2, "PHAS"},
+        {TERTIARY_BOARD,    TERTIARY_BOARD_COMMON_PHASE_INDEX   ,  SOURCE_1, "PHAS"},
+        {TERTIARY_BOARD,    TERTIARY_BOARD_COMMON_PHASE_INDEX   ,  SOURCE_2, "PHAS"},
+        {PRIMARY_BOARD  ,   PRIMARY_BOARD_FIRST_AMP_INDEX       ,  SOURCE_1, "VOLT"},
+        {PRIMARY_BOARD  ,   PRIMARY_BOARD_SECOND_AMP_INDEX      ,  SOURCE_2, "VOLT"},
+        {SECONDARY_BOARD,   SECONDARY_BOARD_FIRST_AMP_INDEX     ,  SOURCE_1, "VOLT"},
+        {SECONDARY_BOARD,   SECONDARY_BOARD_SECOND_AMP_INDEX    ,  SOURCE_2, "VOLT"},
+        {TERTIARY_BOARD,    TERTIARY_BOARD_FIRST_AMP_INDEX      ,  SOURCE_1, "VOLT"},
+        {TERTIARY_BOARD,    TERTIARY_BOARD_SECOND_AMP_INDEX     ,  SOURCE_2, "VOLT"}
+
+        } };
+    // REMOVED THE LAST TWO TO TEST Z UP AND DOWN WITH TWO BUTTONS WITHOUT THE NEED TO CHANGE THE PRESET
+    // IT RUNS INDEPENDENTLY FROM THE XY PRESET FOR NOW
+    // 
+    //{TERTIARY_BOARD,    TERTIARY_BOARD_FIRST_AMP_INDEX      ,  SOURCE_1, "VOLT"},
+    //{TERTIARY_BOARD,    TERTIARY_BOARD_SECOND_AMP_INDEX     ,  SOURCE_2, "VOLT"}
+    static constexpr double EPSILON = 1E-3;
 
 
 
 public:
-	
-	RpSignalGn(const char* primaryBoardIP, const char* secondaryBoardIP) :
-		rp_boards(primaryBoardIP, secondaryBoardIP, 5){
+
+    RpSignalGn(const char* primaryBoardIP, std::array<const char*, SLAVE_BOARDS> slaveBoardsIP = arraySlaveBoardsIP) :
+        rpBoards(primaryBoardIP, slaveBoardsIP, DEFAULT_FREQUENCY), currentFrequency(DEFAULT_FREQUENCY) {
 
 
 
 
 
-	}
 
+    }
 
-	bool check_presetVoltageValueBounds(const std::array<float, 4>& presetArray)const {
-		std::array<int, 4> indexes = { 0,1,2,3 };
-		if (presetArray.size() == 6) {
-			indexes = { 0,1,3,4 };
-		}
-
-		for (const float& amplitude : presetArray) {
-			if (!check_ValueBounds(amplitude, AMPLITUDE_0, AMPLITUDE_MAX)) { return false; }
-		}
-		return true;
-	}
-
-
-	void ramp_up_and_down(const int& card, int source, float current_value, float target_value, const std::string& V_P = "VOLT") {
-		float step_size = (target_value - current_value) / STEPS;
-		const std::string command = "SOUR" + std::to_string(source) + ":" + V_P + " ";
-		float new_value = current_value;
-
-		if (V_P == "PHAS") {
-			current_value = (int)current_value;
-			target_value = (int)target_value;
-		}
-
-
-		
-		for (volatile int i = 0; i < STEPS; i++) {
-			
-			new_value += step_size;
-
-			rp_boards.send_txt(card, command + std::to_string(new_value));
-	
-			std::this_thread::sleep_for(std::chrono::milliseconds(300));
-		}
-
-		std::cout << command + std::to_string(target_value) << std::endl;
-		rp_boards.send_txt(card, command + std::to_string(target_value));
-	}
-
-	void detect_ramp_up_or_down(const int& card, const float& target_value, const float& current_value,const int& source, const std::string& V_P = "VOLT"){
-		if (target_value != current_value){
-			ramp_up_and_down(card, source, current_value, target_value, V_P);
-		}
-
-	}
-	//TODO COMPLETE THIS METHOD
-	bool apply_preset_values(p_array& nextPreset, const p_array& currentPreset){
-		if (nextPreset == currentPreset) {
-			std::cout << "same preset:" << std::endl;
-			std::cout << "preset:" << std::endl;
-			for (auto& x : nextPreset){
-				std::cout << x << " ";
-			}
-		
-
-
-			std::cout << "\n previous preset:" << std::endl;
-			for (auto& x : currentPreset) {
-				std::cout << x << " ";
-			}
-			std::cout<<std::endl;
-
-			return false; }
-
-		std::vector<std::thread> threadVector;
-		threadVector.reserve(8);
-
-		threadVector.emplace_back(&RpSignalGn::detect_ramp_up_or_down,this, PRIMARY_BOARD, nextPreset[2], currentPreset[2], SOURCE_1, "PHAS");
-		threadVector.emplace_back(&RpSignalGn::detect_ramp_up_or_down,this, PRIMARY_BOARD, nextPreset[2], currentPreset[2], SOURCE_2, "PHAS");
-		threadVector.emplace_back(&RpSignalGn::detect_ramp_up_or_down,this, SECONDARY_BOARD, nextPreset[5], currentPreset[5], SOURCE_1, "PHAS");
-		threadVector.emplace_back(&RpSignalGn::detect_ramp_up_or_down,this, SECONDARY_BOARD, nextPreset[5], currentPreset[5], SOURCE_2, "PHAS");
-
-		threadVector.emplace_back(&RpSignalGn::detect_ramp_up_or_down,this, PRIMARY_BOARD, nextPreset[0], currentPreset[0], SOURCE_1, "VOLT");
-		threadVector.emplace_back(&RpSignalGn::detect_ramp_up_or_down,this, PRIMARY_BOARD, nextPreset[1], currentPreset[1], SOURCE_2, "VOLT");
-		threadVector.emplace_back(&RpSignalGn::detect_ramp_up_or_down,this, SECONDARY_BOARD, nextPreset[3], currentPreset[3], SOURCE_1, "VOLT");
-		threadVector.emplace_back(&RpSignalGn::detect_ramp_up_or_down,this, SECONDARY_BOARD, nextPreset[4], currentPreset[4], SOURCE_2, "VOLT");
-
-
-		for (std::thread& t : threadVector) { t.join(); }
-		std::this_thread::sleep_for(std::chrono::milliseconds(500));
-		return true;
+    bool connect_configure_rpBoards() {
+        return rpBoards.ConnectConfigureRpBoards();
+    }
 
 
 
-		//
+    void ramp_up_and_down(const int& card, const int& source, const float& current_value, const float& target_value, const std::string& V_P = "VOLT") {
+        float step_size = (target_value - current_value) / STEPS;
+        const std::string command = "SOUR" + std::to_string(source) + ":" + V_P + " ";
+        float new_value = current_value;
+
+        if (V_P == "PHAS") {
+            rpBoards.send_txt(card, command + std::to_string(target_value));
+            std::cout << "\n board number " << card << "command : " << command + std::to_string(target_value) << std::endl;
+            return;
+
+        }
+
+        for (uint8_t i = 0; i < STEPS; i++) {
+
+            new_value += step_size;
+            if (!(abs(new_value - target_value) < EPSILON)) {
+                rpBoards.send_txt(card, command + std::to_string(new_value));
+                //std::cout << command + std::to_string(new_value) << std::endl;
+
+                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+            }
+        }
+
+        std::cout << '\n' << command + std::to_string(target_value) << std::endl;
+
+        rpBoards.send_txt(card, command + std::to_string(target_value));
+
+    }
+
+    void DetectRampUpOrDown(const int& card, const float& target_value, const float& current_value, const int& source, const std::string& V_P = "VOLT") {
+        if (target_value != current_value) {
+            ramp_up_and_down(card, source, current_value, target_value, V_P);
+        }
+
+    }
+    //TODO COMPLETE THIS METHOD
+    bool ApplyPresetValues(preset_array_t& nextPreset, const preset_array_t& currentPreset) {
 
 
-	
-	
-	
-	}
-		
+        std::array<std::future<void>, 12 > threadArray;
+        for (size_t i = 0; i < taskConfigs.size(); ++i) {
+            const auto& config = taskConfigs[i];
+            threadArray[i] = std::async(
+                std::launch::async,
+                &RpSignalGn::DetectRampUpOrDown, this,
+                config.board,
+                nextPreset[config.presetValueIndex],
+                currentPreset[config.presetValueIndex],
+                config.source,
+                config.param
+            );
+        }
+
+        for (std::future<void>& thread : threadArray) { thread.get(); }
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+        return true;
+    }
+
+
+    void  ApplyFrequencyValues(const float& nextFrequency) {
+        std::cout << "currentFrequency:" << currentFrequency << std::endl;
+        std::array<std::future<void>, 6> threadArray = {
+
+
+
+        std::async(std::launch::async,&RpSignalGn::DetectRampUpOrDown,this, PRIMARY_BOARD, nextFrequency, currentFrequency, SOURCE_1, "FREQ:FIX"),
+        std::async(std::launch::async,&RpSignalGn::DetectRampUpOrDown,this, PRIMARY_BOARD, nextFrequency, currentFrequency, SOURCE_2, "FREQ:FIX"),
+        std::async(std::launch::async,&RpSignalGn::DetectRampUpOrDown,this, SECONDARY_BOARD, nextFrequency, currentFrequency, SOURCE_1, "FREQ:FIX"),
+        std::async(std::launch::async,&RpSignalGn::DetectRampUpOrDown,this, SECONDARY_BOARD, nextFrequency, currentFrequency, SOURCE_2, "FREQ:FIX"),
+        std::async(std::launch::async,&RpSignalGn::DetectRampUpOrDown,this, TERTIARY_BOARD, nextFrequency, currentFrequency, SOURCE_1, "FREQ:FIX"),
+        std::async(std::launch::async,&RpSignalGn::DetectRampUpOrDown,this, TERTIARY_BOARD, nextFrequency, currentFrequency, SOURCE_2, "FREQ:FIX")
+
+
+        };
+
+        for (std::future<void>& thread : threadArray) { thread.get(); }
+
+        currentFrequency = static_cast<int> (nextFrequency);
+
+
+    }
+    void  ApplyPhaseValues(const int& card, const int& nextPhase, const int& currentPhase) {
+
+
+        std::array<std::future<void>, 2> threadArray = {
+        std::async(std::launch::async,&RpSignalGn::DetectRampUpOrDown,this, card, nextPhase, currentPhase, SOURCE_1, "PHAS"),
+        std::async(std::launch::async,&RpSignalGn::DetectRampUpOrDown,this, card, nextPhase, currentPhase, SOURCE_2, "PHAS"),
+        };
+
+        for (std::future<void>& thread : threadArray) { thread.get(); }
+
+
+    }
+
+    bool GetConnectionStatus()const {
+        return rpBoards.GetConnectionStatus();
+    }
+
+
+
+
 
 
 
